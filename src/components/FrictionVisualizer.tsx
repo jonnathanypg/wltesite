@@ -4,14 +4,21 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from "recharts";
 import { Activity, ArrowRight, Zap } from "lucide-react";
 
 const initialData = [
   { name: "Legacy Ops", value: 100, color: "hsl(var(--muted-foreground))" },
   { name: "Agentic Core", value: 12, color: "hsl(var(--primary))" },
 ];
+
+const chartConfig = {
+  value: {
+    label: "Value",
+    color: "hsl(var(--primary))",
+  },
+} satisfies ChartConfig;
 
 export function FrictionVisualizer() {
   const [bottleneck, setBottleneck] = useState("");
@@ -57,7 +64,7 @@ export function FrictionVisualizer() {
         </div>
 
         <div className="h-[250px] w-full mt-8">
-          <ResponsiveContainer width="100%" height="100%">
+          <ChartContainer config={chartConfig}>
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: 'rgba(255,255,255,0.5)', fontSize: 12}} />
@@ -69,7 +76,7 @@ export function FrictionVisualizer() {
                 ))}
               </Bar>
             </BarChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         </div>
 
         {efficiency > 0 && (
