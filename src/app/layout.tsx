@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Navigation } from '@/components/Navigation';
+import { LanguageProvider } from '@/lib/LanguageContext';
 
 export const metadata: Metadata = {
   title: 'WEBLIFETECH | Del Chat de IA a Producción Enterprise',
@@ -37,10 +38,12 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased bg-background text-foreground selection:bg-primary selection:text-primary-foreground min-h-screen flex flex-col">
-        <Navigation />
-        <div className="flex-1 pt-20">
-          {children}
-        </div>
+        <LanguageProvider>
+          <Navigation />
+          <div className="flex-1 pt-20">
+            {children}
+          </div>
+        </LanguageProvider>
       </body>
     </html>
   );

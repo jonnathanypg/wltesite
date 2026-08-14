@@ -1,508 +1,646 @@
 /**
  * ============================================================
- * WEBLIFETECH CONVERSATIONAL NAVIGATOR — Universal Embed Tag
+ * AIKROFY x WEBLIFETECH CONVERSATIONAL NAVIGATOR — Universal Tag
  * ============================================================
- * Versión: 2.6.0
- * Propósito: Insertar navegación conversacional agéntica
- *            en cualquier sitio web (Next.js, HTML, PHP,
- *            WordPress, Webflow, CMS, Vibe-Coded, etc.)
- *
- * USO: Insertar este tag en el <head> del sitio objetivo.
- *
- * <script
- *   src="https://cdn.weblifetech.com/agent/wlt-chat.js"
- *   data-agent-id="YOUR_AGENT_ID"
- *   data-api-url="https://api.weblifetech.com"
- *   data-crm-endpoint="https://crm.weblifetech.com/ingest"
- *   data-theme="dark"
- *   data-brand-color="#00E5FF"
- *   data-lang="es"
- *   async
- * ></script>
+ * Versión: 3.0.0 (Native Agentic Architecture & Zero-Config RAG)
+ * 
+ * Capacidades Principales:
+ *  1. Control total de navegación en tiempo real (SPA & Multi-página)
+ *  2. Soporte nativo para STT (Voice-to-Text) y TTS (Text-to-Speech)
+ *  3. Ingestión RAG contextual automática a cuentas Aikrofy
+ *  4. Compatibilidad universal: Next.js, HTML nativo, PHP, WordPress,
+ *     Webflow, Shopify, CMS Open Source y plataformas Vibe-Coding
+ *  5. Detección automática del DOM si no existe un archivo SKILL.md
+ *  6. Diseño Glassmorphism heredado de la plataforma SaaS Aikrofy
  * ============================================================
  */
 
 (function (window, document) {
   "use strict";
 
-  // ── CONFIGURACIÓN DESDE DATA-ATTRIBUTES DEL SCRIPT ─────────────
+  // Prevenir inicialización duplicada
+  if (window.__AIKROFY_NAVIGATOR_INITIALIZED__) return;
+  window.__AIKROFY_NAVIGATOR_INITIALIZED__ = true;
+
   const scriptTag = document.currentScript ||
-    document.querySelector('script[data-agent-id]');
+    document.querySelector('script[data-agent-id]') ||
+    document.querySelector('script[src*="wlt-chat.js"]');
 
   const CONFIG = {
-    agentId: scriptTag?.getAttribute('data-agent-id') || 'wlt-demo',
+    agentId: scriptTag?.getAttribute('data-agent-id') || 'aikrofy-chief-executive',
     apiUrl: scriptTag?.getAttribute('data-api-url') || 'https://api.weblifetech.com',
     crmEndpoint: scriptTag?.getAttribute('data-crm-endpoint') || 'https://crm.weblifetech.com/ingest',
+    voiceApiUrl: scriptTag?.getAttribute('data-voice-api') || 'https://media.weblifetech.com/api',
     theme: scriptTag?.getAttribute('data-theme') || 'dark',
     brandColor: scriptTag?.getAttribute('data-brand-color') || '#00E5FF',
     brandSecondary: scriptTag?.getAttribute('data-brand-secondary') || '#FF6B00',
     lang: scriptTag?.getAttribute('data-lang') || 'es',
     siteName: scriptTag?.getAttribute('data-site-name') || document.title,
-    logoUrl: scriptTag?.getAttribute('data-logo-url') || '',
+    autoSpeak: scriptTag?.getAttribute('data-auto-speak') === 'true',
   };
 
-  // ── ESTADO DEL AGENTE ─────────────────────────────────────────
   const STATE = {
     open: false,
     history: [],
     currentPage: window.location.pathname,
-    sessionId: 'wlt-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+    sessionId: 'aikrofy-' + Date.now() + '-' + Math.random().toString(36).substring(2, 9),
     leadData: {},
-    siteMap: null,
-    initialized: false,
+    isRecording: false,
+    isSpeaking: false,
+    mediaRecorder: null,
+    audioChunks: [],
+    currentAudio: null,
+    discoveredSiteMap: [],
+    lang: CONFIG.lang,
   };
 
-  // ── SITEMAP INTERNO (PÁGINA + SECCIONES + COPY) ───────────────
-  const SITE_MAP = {
-    pages: [
-      { path: '/', label: 'Inicio', description: 'Home con framework Vibe-to-Prod, comparativa Océano Azul y caso AURIVA', sections: ['hero','problema','solucion','dualidad','metodologia','seguridad','prueba-social','cta'] },
-      { path: '/lab', label: 'WEBLIFETECH Labs', description: 'R&D en infraestructura agéntica, Sovereign RAG y socioeconomía', sections: ['hero','investigaciones','proyectos','puente-agency'] },
-      { path: '/agency', label: 'Agencia FDE', description: 'Forward Deployed Engineering, metodología FDE y estándares de producción', sections: ['hero','metodologia','compromisos','cta'] },
-      { path: '/servicios', label: 'Servicios & Tarifas', description: 'Fase 1 Audit ($2.5k), Fase 2 Hardening ($8k-$90k), Fase 3 Retainer + FAQs', sections: ['fase1','fase2','fase3','faqs'] },
-      { path: '/contacto', label: 'Contacto Ejecutivo', description: 'Contacto directo con ingeniería. Email: dev@weblifetech.com WhatsApp: +593 982840685', sections: ['canales','compromisos'] },
-      { path: '/landing/vibe-to-prod', label: 'Landing Vibe-to-Prod', description: 'Landing alta conversión para fundadores con MVP en Lovable/Replit/Bolt', sections: ['hero','form-fast-track','metricas'] },
-      { path: '/calificar', label: 'Calificar Proyecto', description: 'Formulario conversacional de 5 pasos con enrutamiento inteligente', sections: ['paso1-origen','paso2-desafio','paso3-etapa','paso4-presupuesto','paso5-contacto'] },
-      { path: '/reserva/enterprise-priority', label: 'Prioridad Enterprise', description: 'Reserva de sesión técnica 30min con FDE Senior para proyectos Enterprise/B2G', sections: ['confirmacion','calendario','nda'] },
-      { path: '/reserva/starter-audit', label: 'Starter Audit', description: 'Activación de Fase 1 Vibe Audit & Blueprint desde $185 USD', sections: ['oferta','calendario'] },
-      { path: '/recursos/vibe-readiness-guide', label: 'Guía Vibe-Readiness', description: 'Ebook PDF gratuito para preparar MVP para producción', sections: ['recursos','descarga'] },
-      { path: '/tools/auditwlt', label: 'AuditWLT Tool', description: 'Herramienta de auditoría web: SEO, seguridad, CMS, detección vibe-coding, marcas de agua, CSS/HTML/JS', sections: ['input-url','progreso-scan','resultado','propuesta'] },
-    ],
-    navigateTo: function (path) {
-      const page = this.pages.find(p => p.path === path);
-      if (!page) return;
-      if (window.history && window.history.pushState) {
-        window.history.pushState({}, page.label, path);
-        window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
-      } else {
-        window.location.href = path;
-      }
-      STATE.currentPage = path;
+  // Diccionario Bilingüe Interno del Agente
+  const I18N = {
+    es: {
+      welcome: "👋 Hola, soy el <strong>Asistente Agéntico de WEBLIFETECH / Aikrofy</strong>.",
+      currentIn: "Está explorando la sección",
+      helpPrompt: "¿Qué desea consultar o a qué página desea que le dirija?",
+      navHome: "Inicio",
+      navLab: "Labs R&D",
+      navAgency: "Agencia FDE",
+      navServices: "Servicios & Tarifas",
+      navContact: "Contacto",
+      navAudit: "Herramienta AuditWLT",
+      navCalificar: "Calificar Proyecto",
+      micListening: "Escuchando... hable ahora",
+      micHold: "Procesando su audio con IA...",
+      btnSend: "Enviar",
+      inputPlaceholder: "Escriba o use el micrófono para navegar...",
+      speaking: "Reproduciendo voz...",
     },
-    getCurrentPageInfo: function () {
-      return this.pages.find(p => p.path === STATE.currentPage) || this.pages[0];
-    },
-    scrollToSection: function (sectionId) {
-      const el = document.getElementById(sectionId) || document.querySelector('[data-section="' + sectionId + '"]');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    en: {
+      welcome: "👋 Hello, I am the <strong>WEBLIFETECH / Aikrofy Agentic Navigator</strong>.",
+      currentIn: "Currently exploring",
+      helpPrompt: "What would you like to consult or where should I navigate you?",
+      navHome: "Home",
+      navLab: "Labs R&D",
+      navAgency: "FDE Agency",
+      navServices: "Services & Pricing",
+      navContact: "Contact",
+      navAudit: "AuditWLT Tool",
+      navCalificar: "Qualify Project",
+      micListening: "Listening... speak now",
+      micHold: "Processing your audio with AI...",
+      btnSend: "Send",
+      inputPlaceholder: "Type or use voice to navigate...",
+      speaking: "Playing voice response...",
     }
   };
 
-  // ── ESTILOS CSS DINÁMICOS ─────────────────────────────────────
+  // Sitemap canónico para sitios WEBLIFETECH
+  const CANONICAL_PAGES = [
+    { path: '/', label: 'Home', labelEn: 'Home', descEs: 'Framework Vibe-to-Prod y comparativa Océano Azul', descEn: 'Vibe-to-Prod framework and Blue Ocean comparison' },
+    { path: '/lab', label: 'Labs R&D', labelEn: 'Labs R&D', descEs: 'Investigación en Swarms e infraestructura agéntica', descEn: 'Swarms research and agentic infrastructure' },
+    { path: '/agency', label: 'Agencia FDE', labelEn: 'FDE Agency', descEs: 'Forward Deployed Engineering e ingeniería de producción', descEn: 'Forward Deployed Engineering and production systems' },
+    { path: '/servicios', label: 'Servicios', labelEn: 'Services', descEs: 'Tarifario de Fase 1 Audit, Fase 2 Hardening y Retainer', descEn: 'Phase 1 Audit, Phase 2 Hardening & Retainer pricing' },
+    { path: '/contacto', label: 'Contacto', labelEn: 'Contact', descEs: 'Canales directos y reunión técnica con ingenieros', descEn: 'Direct engineering channels and technical meeting' },
+    { path: '/tools/auditwlt', label: 'AuditWLT Tool', labelEn: 'AuditWLT Tool', descEs: 'Auditoría SEO, seguridad, CMS y Vibe-coding', descEn: 'SEO, security, CMS and Vibe-coding audit engine' },
+    { path: '/calificar', label: 'Calificar', labelEn: 'Qualify', descEs: 'Evaluación y enrutamiento dinámico en 5 pasos', descEn: 'Dynamic 5-step qualification and routing' },
+    { path: '/landing/vibe-to-prod', label: 'Landing Rescue', labelEn: 'Landing Rescue', descEs: 'Página de alta conversión para rescate de prototipos', descEn: 'High-conversion prototype rescue landing' },
+  ];
+
+  // ── MOTOR DE NAVEGACIÓN UNIVERSAL (SPA & MULTI-PAGE) ─────────
+  function navigateTo(path) {
+    if (!path) return;
+    STATE.currentPage = path;
+
+    // 1. Si estamos en Next.js / SPA con History API
+    if (window.history && window.history.pushState) {
+      window.history.pushState({}, '', path);
+      window.dispatchEvent(new PopStateEvent('popstate', { state: {} }));
+      
+      // Si Next.js no capturó el popstate de forma síncrona, usamos location como fallback
+      setTimeout(() => {
+        if (window.location.pathname !== path) {
+          window.location.href = path;
+        }
+      }, 150);
+    } else {
+      window.location.href = path;
+    }
+
+    updateNavBar();
+    ingestContextToAikrofyRAG({
+      event: 'agent_navigation',
+      targetPath: path,
+      source: 'conversational_navigator'
+    });
+  }
+
+  // ── AUTO-DESCUBRIMIENTO DEL DOM (PARA CMS / SITIOS LEGACY) ───
+  function discoverSiteHierarchy() {
+    const links = Array.from(document.querySelectorAll('a[href]'));
+    const internalRoutes = new Set();
+
+    links.forEach(a => {
+      const href = a.getAttribute('href');
+      if (href && href.startsWith('/') && !href.startsWith('//') && !href.includes('#')) {
+        internalRoutes.add(href);
+      }
+    });
+
+    STATE.discoveredSiteMap = Array.from(internalRoutes).map(route => ({
+      path: route,
+      label: route.replace('/', '').replace(/-/g, ' ').toUpperCase() || 'HOME'
+    }));
+  }
+
+  // ── INGESTIÓN RAG EN TIEMPO REAL A AIKROFY ───────────────────
+  function ingestContextToAikrofyRAG(extraData = {}) {
+    const payload = {
+      agentId: CONFIG.agentId,
+      sessionId: STATE.sessionId,
+      currentPage: window.location.pathname,
+      pageTitle: document.title,
+      language: STATE.lang,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent,
+      domSnippet: document.querySelector('h1')?.innerText || '',
+      ...extraData
+    };
+
+    // Intentar sync via beacon o fetch no bloqueante
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(CONFIG.crmEndpoint, JSON.stringify(payload));
+      } else {
+        fetch(CONFIG.crmEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        }).catch(() => {});
+      }
+    } catch (_) {}
+  }
+
+  // ── SÍNTESIS DE VOZ NATIVA (TTS) ──────────────────────────────
+  function speakText(text) {
+    if (!text || typeof window === 'undefined') return;
+
+    // Limpieza de etiquetas HTML para el lector de voz
+    const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/&nbsp;/g, ' ').trim();
+    if (!cleanText) return;
+
+    // Si ya existe audio en reproducción, detenerlo
+    if (STATE.currentAudio) {
+      STATE.currentAudio.pause();
+      STATE.currentAudio = null;
+    }
+
+    // Intentar síntesis via Web Speech API nativa (0 latencia)
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.lang = STATE.lang === 'es' ? 'es-ES' : 'en-US';
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+      
+      utterance.onstart = () => { STATE.isSpeaking = true; updateVoiceIndicator(); };
+      utterance.onend = () => { STATE.isSpeaking = false; updateVoiceIndicator(); };
+      utterance.onerror = () => { STATE.isSpeaking = false; updateVoiceIndicator(); };
+
+      window.speechSynthesis.speak(utterance);
+    }
+  }
+
+  // ── GRABACIÓN DE VOZ (STT) ───────────────────────────────────
+  async function toggleVoiceRecording() {
+    const micBtn = document.getElementById('aikrofy-mic-btn');
+    if (!micBtn) return;
+
+    // Si ya está usando SpeechRecognition nativo
+    if (('webkitSpeechRecognition' in window) || ('SpeechRecognition' in window)) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRec();
+      recognition.lang = STATE.lang === 'es' ? 'es-ES' : 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      micBtn.classList.add('aikrofy-recording');
+      const typingEl = showTyping();
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        micBtn.classList.remove('aikrofy-recording');
+        removeTyping();
+        if (transcript) {
+          sendMessage(transcript);
+        }
+      };
+
+      recognition.onerror = () => {
+        micBtn.classList.remove('aikrofy-recording');
+        removeTyping();
+      };
+
+      recognition.onend = () => {
+        micBtn.classList.remove('aikrofy-recording');
+      };
+
+      recognition.start();
+      return;
+    }
+
+    alert(STATE.lang === 'es' ? 'Su navegador no soporta reconocimiento de voz nativo.' : 'Native speech recognition not supported in this browser.');
+  }
+
+  // ── ESTILOS DARK GLASSMORPHISM AIKROFY ───────────────────────
   function injectStyles() {
-    const isDark = CONFIG.theme === 'dark';
     const css = `
       :root {
-        --wlt-brand: ${CONFIG.brandColor};
-        --wlt-secondary: ${CONFIG.brandSecondary};
-        --wlt-bg: ${isDark ? '#0A0F1E' : '#FFFFFF'};
-        --wlt-surface: ${isDark ? '#0F172A' : '#F8FAFC'};
-        --wlt-border: ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'};
-        --wlt-text: ${isDark ? '#F1F5F9' : '#0F172A'};
-        --wlt-muted: ${isDark ? '#64748B' : '#94A3B8'};
-        --wlt-radius: 20px;
+        --aik-brand: ${CONFIG.brandColor};
+        --aik-secondary: ${CONFIG.brandSecondary};
+        --aik-bg: #070B14;
+        --aik-surface: rgba(15, 23, 42, 0.85);
+        --aik-surface-light: rgba(30, 41, 59, 0.7);
+        --aik-border: rgba(0, 229, 255, 0.2);
+        --aik-border-subtle: rgba(255, 255, 255, 0.08);
+        --aik-text: #F8FAFC;
+        --aik-muted: #94A3B8;
+        --aik-radius: 24px;
       }
-      #wlt-fab {
+      #aikrofy-fab {
         position: fixed;
         bottom: 28px;
         right: 28px;
-        z-index: 9998;
+        z-index: 999998;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-        filter: drop-shadow(0 8px 24px color-mix(in srgb, var(--wlt-brand) 40%, transparent));
+        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        filter: drop-shadow(0 10px 30px rgba(0, 229, 255, 0.35));
       }
-      #wlt-fab:hover { transform: scale(1.08) translateY(-2px); }
-      #wlt-fab-btn {
-        width: 56px;
-        height: 56px;
-        border-radius: 18px;
-        background: linear-gradient(135deg, var(--wlt-brand), color-mix(in srgb, var(--wlt-brand) 60%, #6366F1));
+      #aikrofy-fab:hover { transform: scale(1.06) translateY(-2px); }
+      #aikrofy-fab-btn {
+        width: 60px;
+        height: 60px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, var(--aik-brand), #3B82F6);
         border: none;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        position: relative;
-        overflow: hidden;
+        box-shadow: 0 0 25px rgba(0, 229, 255, 0.5);
       }
-      #wlt-fab-btn::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
-        border-radius: inherit;
-      }
-      #wlt-fab-pill {
-        background: var(--wlt-surface);
-        border: 1px solid var(--wlt-border);
-        border-radius: 30px;
-        padding: 8px 16px;
+      #aikrofy-fab-pill {
+        background: var(--aik-surface);
+        border: 1px solid var(--aik-border);
+        border-radius: 40px;
+        padding: 9px 18px;
         font-size: 12px;
-        font-weight: 600;
-        color: var(--wlt-text);
-        white-space: nowrap;
-        backdrop-filter: blur(12px);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        font-family: -apple-system, 'Inter', sans-serif;
+        font-weight: 700;
+        color: var(--aik-text);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
+        letter-spacing: 0.3px;
       }
-      #wlt-fab-dot {
+      #aikrofy-fab-dot {
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background: var(--wlt-brand);
-        animation: wlt-ping 1.5s ease-in-out infinite;
+        background: #10B981;
+        box-shadow: 0 0 10px #10B981;
+        animation: aik-pulse 1.8s infinite;
       }
-      @keyframes wlt-ping {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.7; transform: scale(1.3); }
+      @keyframes aik-pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.35); opacity: 0.7; }
       }
-      #wlt-panel {
+      #aikrofy-panel {
         position: fixed;
-        bottom: 96px;
+        bottom: 100px;
         right: 28px;
-        width: 380px;
-        max-height: 580px;
-        z-index: 9999;
-        border-radius: var(--wlt-radius);
-        background: var(--wlt-bg);
-        border: 1px solid var(--wlt-border);
+        width: 400px;
+        max-height: 620px;
+        height: 82vh;
+        z-index: 999999;
+        border-radius: var(--aik-radius);
+        background: var(--aik-bg);
+        border: 1px solid var(--aik-border);
         display: flex;
         flex-direction: column;
         overflow: hidden;
-        box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px var(--wlt-border);
-        backdrop-filter: blur(24px);
-        transform: scale(0.9) translateY(20px);
+        box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px var(--aik-border);
+        backdrop-filter: blur(28px);
+        transform: scale(0.92) translateY(24px);
         opacity: 0;
         pointer-events: none;
-        transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-        font-family: -apple-system, 'Inter', 'Segoe UI', sans-serif;
+        transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       }
-      #wlt-panel.wlt-open {
+      #aikrofy-panel.aik-open {
         transform: scale(1) translateY(0);
         opacity: 1;
         pointer-events: all;
       }
-      #wlt-panel-header {
+      #aikrofy-header {
         padding: 16px 20px;
-        background: linear-gradient(135deg, var(--wlt-brand)22, transparent);
-        border-bottom: 1px solid var(--wlt-border);
+        background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(59, 130, 246, 0.05));
+        border-bottom: 1px solid var(--aik-border-subtle);
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 12px;
       }
-      #wlt-panel-logo {
+      #aikrofy-header-info {
         display: flex;
         align-items: center;
         gap: 10px;
       }
-      #wlt-panel-logo-icon {
-        width: 36px;
-        height: 36px;
-        border-radius: 10px;
-        background: linear-gradient(135deg, var(--wlt-brand), #6366F1);
+      .aik-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--aik-brand), var(--aik-secondary));
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 18px;
       }
-      #wlt-panel-logo-text {
-        display: flex;
-        flex-direction: column;
-      }
-      #wlt-panel-logo-name {
-        font-size: 13px;
-        font-weight: 700;
-        color: var(--wlt-text);
-        letter-spacing: -0.3px;
-      }
-      #wlt-panel-logo-sub {
+      .aik-title { font-size: 13px; font-weight: 800; color: #fff; letter-spacing: -0.2px; }
+      .aik-sub { font-size: 10px; font-mono; color: var(--aik-brand); text-transform: uppercase; }
+      .aik-lang-toggle {
+        padding: 4px 8px;
+        border-radius: 20px;
+        border: 1px solid var(--aik-border);
+        background: rgba(255,255,255,0.05);
+        color: var(--aik-brand);
         font-size: 10px;
-        color: var(--wlt-muted);
-        font-weight: 500;
-      }
-      #wlt-close-btn {
-        width: 28px;
-        height: 28px;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.06);
-        border: 1px solid var(--wlt-border);
+        font-weight: 700;
         cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--wlt-muted);
-        font-size: 16px;
         transition: all 0.2s;
       }
-      #wlt-close-btn:hover { background: rgba(255,255,255,0.1); color: var(--wlt-text); }
-      #wlt-nav-bar {
+      .aik-lang-toggle:hover { background: var(--aik-brand); color: #000; }
+      #aikrofy-nav-ribbon {
         display: flex;
-        gap: 4px;
+        gap: 6px;
         padding: 8px 12px;
         overflow-x: auto;
+        border-bottom: 1px solid var(--aik-border-subtle);
+        background: rgba(0,0,0,0.3);
         scrollbar-width: none;
-        border-bottom: 1px solid var(--wlt-border);
-        background: rgba(255,255,255,0.02);
       }
-      #wlt-nav-bar::-webkit-scrollbar { display: none; }
-      .wlt-nav-btn {
+      #aikrofy-nav-ribbon::-webkit-scrollbar { display: none; }
+      .aik-pill-btn {
         flex-shrink: 0;
         padding: 5px 12px;
-        border-radius: 30px;
-        font-size: 10px;
+        border-radius: 20px;
+        font-size: 11px;
         font-weight: 600;
+        border: 1px solid var(--aik-border-subtle);
+        background: rgba(255,255,255,0.03);
+        color: var(--aik-muted);
         cursor: pointer;
-        border: 1px solid var(--wlt-border);
-        background: transparent;
-        color: var(--wlt-muted);
         transition: all 0.2s;
-        white-space: nowrap;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
       }
-      .wlt-nav-btn:hover, .wlt-nav-btn.active {
-        background: var(--wlt-brand);
+      .aik-pill-btn:hover, .aik-pill-btn.active {
+        background: var(--aik-brand);
         color: #000;
-        border-color: var(--wlt-brand);
+        border-color: var(--aik-brand);
+        font-weight: 700;
       }
-      #wlt-messages {
+      #aikrofy-messages {
         flex: 1;
         overflow-y: auto;
         padding: 16px;
         display: flex;
         flex-direction: column;
         gap: 12px;
-        scrollbar-width: thin;
-        scrollbar-color: var(--wlt-border) transparent;
       }
-      .wlt-msg {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        animation: wlt-fade-in 0.25s ease-out;
-      }
-      @keyframes wlt-fade-in {
-        from { opacity: 0; transform: translateY(8px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .wlt-msg-user { align-items: flex-end; }
-      .wlt-msg-agent { align-items: flex-start; }
-      .wlt-bubble {
+      .aik-msg { display: flex; flex-direction: column; gap: 4px; animation: aik-fade 0.2s ease-out; }
+      @keyframes aik-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      .aik-msg-user { align-items: flex-end; }
+      .aik-msg-agent { align-items: flex-start; }
+      .aik-bubble {
         max-width: 85%;
-        padding: 10px 14px;
-        border-radius: 16px;
+        padding: 11px 15px;
+        border-radius: 18px;
         font-size: 13px;
         line-height: 1.5;
-        word-break: break-word;
       }
-      .wlt-bubble-user {
-        background: var(--wlt-brand);
-        color: #000;
-        border-radius: 16px 16px 4px 16px;
+      .aik-bubble-user {
+        background: linear-gradient(135deg, var(--aik-brand), #2563EB);
+        color: #fff;
+        border-radius: 18px 18px 4px 18px;
         font-weight: 500;
       }
-      .wlt-bubble-agent {
-        background: var(--wlt-surface);
-        border: 1px solid var(--wlt-border);
-        color: var(--wlt-text);
-        border-radius: 16px 16px 16px 4px;
+      .aik-bubble-agent {
+        background: var(--aik-surface);
+        border: 1px solid var(--aik-border-subtle);
+        color: var(--aik-text);
+        border-radius: 18px 18px 18px 4px;
       }
-      .wlt-typing {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        padding: 10px 14px;
-        background: var(--wlt-surface);
-        border: 1px solid var(--wlt-border);
-        border-radius: 16px 16px 16px 4px;
-        width: fit-content;
-      }
-      .wlt-dot {
-        width: 6px; height: 6px;
-        border-radius: 50%;
-        background: var(--wlt-muted);
-        animation: wlt-bounce 1.2s ease-in-out infinite;
-      }
-      .wlt-dot:nth-child(2) { animation-delay: 0.2s; }
-      .wlt-dot:nth-child(3) { animation-delay: 0.4s; }
-      @keyframes wlt-bounce {
-        0%, 100% { transform: translateY(0); opacity: 0.5; }
-        50% { transform: translateY(-4px); opacity: 1; }
-      }
-      .wlt-quick-btns {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
+      .aik-audio-btn {
         margin-top: 6px;
-      }
-      .wlt-quick-btn {
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 12px;
+        background: rgba(0, 229, 255, 0.1);
+        border: 1px solid var(--aik-border);
+        color: var(--aik-brand);
+        font-size: 10px;
         font-weight: 600;
         cursor: pointer;
-        border: 1px solid var(--wlt-brand);
-        background: transparent;
-        color: var(--wlt-brand);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .aik-audio-btn:hover { background: var(--aik-brand); color: #000; }
+      .aik-quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+      .aik-quick-btn {
+        padding: 5px 12px;
+        border-radius: 16px;
+        font-size: 11px;
+        border: 1px solid var(--aik-brand);
+        background: rgba(0, 229, 255, 0.05);
+        color: var(--aik-brand);
+        cursor: pointer;
         transition: all 0.2s;
       }
-      .wlt-quick-btn:hover {
-        background: var(--wlt-brand);
-        color: #000;
-      }
-      #wlt-input-bar {
+      .aik-quick-btn:hover { background: var(--aik-brand); color: #000; }
+      #aikrofy-input-bar {
         padding: 12px 16px;
-        border-top: 1px solid var(--wlt-border);
+        border-top: 1px solid var(--aik-border-subtle);
         display: flex;
-        gap: 10px;
-        align-items: flex-end;
-        background: rgba(255,255,255,0.02);
+        gap: 8px;
+        align-items: center;
+        background: rgba(0,0,0,0.2);
       }
-      #wlt-input {
+      #aikrofy-input {
         flex: 1;
-        background: var(--wlt-surface);
-        border: 1px solid var(--wlt-border);
-        border-radius: 12px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--aik-border-subtle);
+        border-radius: 14px;
         padding: 10px 14px;
         font-size: 13px;
-        color: var(--wlt-text);
+        color: #fff;
         outline: none;
         resize: none;
-        min-height: 40px;
-        max-height: 100px;
+        min-height: 42px;
+        max-height: 90px;
         font-family: inherit;
-        transition: border 0.2s;
-        line-height: 1.5;
       }
-      #wlt-input::placeholder { color: var(--wlt-muted); }
-      #wlt-input:focus { border-color: var(--wlt-brand); }
-      #wlt-send-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: var(--wlt-brand);
+      #aikrofy-input:focus { border-color: var(--aik-brand); }
+      .aik-action-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
         border: none;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.2s;
-        flex-shrink: 0;
       }
-      #wlt-send-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
-      #wlt-footer {
+      #aikrofy-mic-btn {
+        background: rgba(255,255,255,0.06);
+        color: var(--aik-brand);
+        border: 1px solid var(--aik-border);
+      }
+      #aikrofy-mic-btn.aikrofy-recording {
+        background: #EF4444;
+        color: #fff;
+        animation: aik-pulse 1s infinite;
+      }
+      #aikrofy-send-btn {
+        background: linear-gradient(135deg, var(--aik-brand), var(--aik-secondary));
+        color: #000;
+      }
+      #aikrofy-send-btn:hover { transform: scale(1.05); }
+      #aikrofy-footer {
         text-align: center;
         padding: 6px;
         font-size: 9px;
-        color: var(--wlt-muted);
-        font-weight: 500;
-        letter-spacing: 0.5px;
-        font-family: monospace;
-        border-top: 1px solid var(--wlt-border);
-        opacity: 0.5;
+        color: var(--aik-muted);
+        font-mono;
+        border-top: 1px solid var(--aik-border-subtle);
+        background: rgba(0,0,0,0.4);
       }
-      @media (max-width: 440px) {
-        #wlt-panel {
-          right: 12px;
-          bottom: 90px;
-          width: calc(100vw - 24px);
-          max-height: 70vh;
-        }
-        #wlt-fab { right: 16px; bottom: 20px; }
+      @media (max-width: 480px) {
+        #aikrofy-panel { right: 12px; bottom: 90px; width: calc(100vw - 24px); height: 75vh; }
+        #aikrofy-fab { right: 16px; bottom: 20px; }
       }
     `;
     const style = document.createElement('style');
-    style.id = 'wlt-styles';
+    style.id = 'aikrofy-agent-styles';
     style.textContent = css;
     document.head.appendChild(style);
   }
 
-  // ── CONSTRUIR HTML DEL WIDGET ─────────────────────────────────
+  // ── CONSTRUIR UI DEL AGENTE AIKROFY ──────────────────────────
   function buildWidget() {
-    // FAB Button
     const fab = document.createElement('div');
-    fab.id = 'wlt-fab';
+    fab.id = 'aikrofy-fab';
     fab.innerHTML = `
-      <div id="wlt-fab-pill">
-        <span id="wlt-fab-dot"></span>
-        Habla con el Asesor IA
+      <div id="aikrofy-fab-pill">
+        <span id="aikrofy-fab-dot"></span>
+        <span>AI Navigator & Voice</span>
       </div>
-      <button id="wlt-fab-btn" aria-label="Abrir chat WEBLIFETECH">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 12H16M8 8H12M6 20L2 22L3.5 18C2.57 17.08 2 15.83 2 14.5C2 11.46 4.69 9 8 9H9M18 14C18 17.31 15.31 20 12 20C11.17 20 10.38 19.82 9.67 19.5L6 20L7 17" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="18" cy="6" r="4" fill="${CONFIG.brandSecondary}"/>
-          <path d="M16.5 6H19.5M18 4.5V7.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+      <button id="aikrofy-fab-btn" aria-label="Abrir Asistente Aikrofy">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" x2="12" y1="19" y2="22"/>
         </svg>
       </button>
     `;
     document.body.appendChild(fab);
 
-    // Panel
     const panel = document.createElement('div');
-    panel.id = 'wlt-panel';
-    panel.setAttribute('role', 'dialog');
-    panel.setAttribute('aria-label', 'Chat WEBLIFETECH Navigator');
+    panel.id = 'aikrofy-panel';
     panel.innerHTML = `
-      <div id="wlt-panel-header">
-        <div id="wlt-panel-logo">
-          <div id="wlt-panel-logo-icon">⚡</div>
-          <div id="wlt-panel-logo-text">
-            <div id="wlt-panel-logo-name">WEBLIFETECH Agent</div>
-            <div id="wlt-panel-logo-sub">NAVEGADOR CONVERSACIONAL IA · EN LÍNEA</div>
+      <div id="aikrofy-header">
+        <div id="aikrofy-header-info">
+          <div class="aik-avatar">⚡</div>
+          <div>
+            <div class="aik-title">Aikrofy AI Navigator</div>
+            <div class="aik-sub">Live RAG · Voice Enabled</div>
           </div>
         </div>
-        <button id="wlt-close-btn" aria-label="Cerrar chat">✕</button>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button id="aik-toggle-lang" class="aik-lang-toggle">${STATE.lang.toUpperCase()}</button>
+          <button id="aikrofy-close-btn" style="background:transparent;border:none;color:#fff;cursor:pointer;font-size:16px;padding:4px 8px;">✕</button>
+        </div>
       </div>
 
-      <div id="wlt-nav-bar">
-        ${SITE_MAP.pages.slice(0, 7).map(p =>
-          `<button class="wlt-nav-btn" data-path="${p.path}">${p.label}</button>`
-        ).join('')}
+      <div id="aikrofy-nav-ribbon">
+        ${CANONICAL_PAGES.map(p => `
+          <button class="aik-pill-btn" data-path="${p.path}">
+            ${STATE.lang === 'es' ? p.label : p.labelEn}
+          </button>
+        `).join('')}
       </div>
 
-      <div id="wlt-messages"></div>
+      <div id="aikrofy-messages"></div>
 
-      <div id="wlt-input-bar">
-        <textarea id="wlt-input" rows="1" placeholder="¿Qué necesita saber? ¿A dónde va?"></textarea>
-        <button id="wlt-send-btn" aria-label="Enviar mensaje">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      <div id="aikrofy-input-bar">
+        <button id="aikrofy-mic-btn" class="aik-action-btn" title="Hablar por micrófono">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" x2="12" y1="19" y2="22"/>
+          </svg>
+        </button>
+        <textarea id="aikrofy-input" rows="1" placeholder="${I18N[STATE.lang].inputPlaceholder}"></textarea>
+        <button id="aikrofy-send-btn" class="aik-action-btn" title="Enviar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
           </svg>
         </button>
       </div>
-      <div id="wlt-footer">POWERED BY WEBLIFETECH AGENTIC ENGINE · SESSION ${STATE.sessionId.toUpperCase()}</div>
+
+      <div id="aikrofy-footer">AIKROFY AGENTIC ARCHITECTURE · RAG PROTOCOL 2026</div>
     `;
     document.body.appendChild(panel);
   }
 
-  // ── MOTOR DE MENSAJERÍA ───────────────────────────────────────
+  // ── MENSAJES & RESPUESTAS ────────────────────────────────────
   function addMessage(role, content, quickReplies) {
-    const container = document.getElementById('wlt-messages');
+    const container = document.getElementById('aikrofy-messages');
+    if (!container) return;
+
     const msgEl = document.createElement('div');
-    msgEl.className = `wlt-msg wlt-msg-${role}`;
+    msgEl.className = `aik-msg aik-msg-${role}`;
 
     const bubble = document.createElement('div');
-    bubble.className = `wlt-bubble wlt-bubble-${role}`;
+    bubble.className = `aik-bubble aik-bubble-${role}`;
     bubble.innerHTML = content;
+
+    // Si es agente, agregar botón de lectura de voz
+    if (role === 'agent') {
+      const audioBtn = document.createElement('button');
+      audioBtn.className = 'aik-audio-btn';
+      audioBtn.innerHTML = '🔊 Escuchar';
+      audioBtn.onclick = () => speakText(content);
+      bubble.appendChild(document.createElement('br'));
+      bubble.appendChild(audioBtn);
+
+      if (CONFIG.autoSpeak) {
+        speakText(content);
+      }
+    }
+
     msgEl.appendChild(bubble);
 
     if (quickReplies && quickReplies.length > 0) {
       const qr = document.createElement('div');
-      qr.className = 'wlt-quick-btns';
+      qr.className = 'aik-quick-replies';
       quickReplies.forEach(qrb => {
         const btn = document.createElement('button');
-        btn.className = 'wlt-quick-btn';
+        btn.className = 'aik-quick-btn';
         btn.textContent = qrb.label;
-        btn.onclick = () => { sendMessage(qrb.value || qrb.label, true); };
+        btn.onclick = () => sendMessage(qrb.value || qrb.label);
         qr.appendChild(btn);
       });
       msgEl.appendChild(qr);
@@ -511,276 +649,185 @@
     STATE.history.push({ role, content });
     container.appendChild(msgEl);
     container.scrollTop = container.scrollHeight;
-    return msgEl;
   }
 
   function showTyping() {
-    const container = document.getElementById('wlt-messages');
+    const container = document.getElementById('aikrofy-messages');
     const typing = document.createElement('div');
-    typing.className = 'wlt-msg wlt-msg-agent';
-    typing.id = 'wlt-typing';
-    typing.innerHTML = '<div class="wlt-typing"><div class="wlt-dot"></div><div class="wlt-dot"></div><div class="wlt-dot"></div></div>';
+    typing.className = 'aik-msg aik-msg-agent';
+    typing.id = 'aikrofy-typing';
+    typing.innerHTML = '<div class="aik-bubble aik-bubble-agent"><em>Pensando...</em></div>';
     container.appendChild(typing);
     container.scrollTop = container.scrollHeight;
     return typing;
   }
 
   function removeTyping() {
-    const t = document.getElementById('wlt-typing');
+    const t = document.getElementById('aikrofy-typing');
     if (t) t.remove();
   }
 
-  // ── MOTOR DE INTENCIÓN / NLU LOCAL ────────────────────────────
+  function updateVoiceIndicator() {
+    const mic = document.getElementById('aikrofy-mic-btn');
+    if (mic && STATE.isSpeaking) {
+      mic.style.borderColor = '#10B981';
+    } else if (mic) {
+      mic.style.borderColor = '';
+    }
+  }
+
+  // ── MOTOR DE INTENCIÓN NLU & ENRUTAMIENTO ────────────────────
   function parseIntent(text) {
     const t = text.toLowerCase();
 
-    // Navegación
-    if (/(ir a|llevar|lleva|navegar|abrir|muéstrame|mostrar|ver|show|go to)\s*(la\s*)?(página|pagina|sección|section)?\s*(inicio|home|principal)/.test(t)) return { type: 'navigate', path: '/' };
-    if (/(lab|investigaci|r&d|research|agente|agentic|rag|sovereign)/.test(t)) return { type: 'navigate', path: '/lab' };
-    if (/(agencia|agency|fde|forward.?deployed|equipo|team)/.test(t)) return { type: 'navigate', path: '/agency' };
-    if (/(servicio|service|precio|tarifas|tarifa|costo|price|cuánto|cuanto|fase)/.test(t)) return { type: 'navigate', path: '/servicios' };
-    if (/(contacto|contact|email|whatsapp|llamar|call|hablar)/.test(t)) return { type: 'navigate', path: '/contacto' };
-    if (/(califica|califique|evalua|evalúa|aplicar|apply|triage|formulario|qualify)/.test(t)) return { type: 'navigate', path: '/calificar' };
-    if (/(audit|herramienta|tool|inspección|inspeccion|escanear|scan)/.test(t)) return { type: 'navigate', path: '/tools/auditwlt' };
-    if (/(landing|vibe.?to.?prod|rescate|rescate)/.test(t)) return { type: 'navigate', path: '/landing/vibe-to-prod' };
-    if (/(guía|guia|ebook|pdf|descarga|download|readiness)/.test(t)) return { type: 'navigate', path: '/recursos/vibe-readiness-guide' };
+    if (/(home|inicio|principal|start)/.test(t)) return { type: 'navigate', path: '/' };
+    if (/(lab|investiga|r&d|research|swarms)/.test(t)) return { type: 'navigate', path: '/lab' };
+    if (/(agencia|agency|fde|forward|team)/.test(t)) return { type: 'navigate', path: '/agency' };
+    if (/(servicio|service|precio|price|tarifa|costo|fase)/.test(t)) return { type: 'navigate', path: '/servicios' };
+    if (/(contacto|contact|email|whatsapp|llamar)/.test(t)) return { type: 'navigate', path: '/contacto' };
+    if (/(audit|herramienta|tool|escan|scan|vibe)/.test(t)) return { type: 'navigate', path: '/tools/auditwlt' };
+    if (/(califica|evalua|qualify|wizard|formulario)/.test(t)) return { type: 'navigate', path: '/calificar' };
 
-    // Preguntas de información
-    if (/(qué|que|what|quien|quién|cuáles|cuales).*(hace|hace|es|son|ofrece)/.test(t)) return { type: 'info', topic: 'about' };
-    if (/(precio|costo|cuánto|cuanto|inversión|tarifa)/.test(t)) return { type: 'info', topic: 'pricing' };
-    if (/(lovable|replit|bolt|cursor|vibe)/.test(t)) return { type: 'info', topic: 'vibe' };
-    if (/(nda|seguridad|security|iso|soc2|rbac)/.test(t)) return { type: 'info', topic: 'security' };
-
-    // CRM lead capture
-    if (/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/.test(text)) return { type: 'lead', email: text.match(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/)[0] };
-
-    return { type: 'unknown' };
+    return { type: 'general' };
   }
 
-  // ── AGENTE DE RESPUESTA ───────────────────────────────────────
-  function generateAgentResponse(intent, userText) {
-    const pageInfo = SITE_MAP.getCurrentPageInfo();
+  async function sendMessage(text) {
+    if (!text || !text.trim()) return;
+    const input = document.getElementById('aikrofy-input');
+    if (input) input.value = '';
 
-    switch (intent.type) {
-      case 'navigate':
-        const targetPage = SITE_MAP.pages.find(p => p.path === intent.path);
-        if (targetPage) {
-          setTimeout(() => SITE_MAP.navigateTo(intent.path), 500);
-          return {
-            text: `<strong>Navegando a ${targetPage.label}</strong> ✓<br><small style="opacity:0.7">${targetPage.description}</small>`,
-            quickReplies: [
-              { label: '← Inicio', value: 'Ir al inicio' },
-              { label: 'Calificar Proyecto →', value: 'Ir a calificar' }
-            ]
-          };
-        }
-        break;
-
-      case 'info':
-        if (intent.topic === 'pricing') {
-          return {
-            text: `💰 <strong>Tarifas WEBLIFETECH:</strong><br>
-• <strong>Fase 1 Audit:</strong> $2,500–$3,500 USD (3–5 días)<br>
-• <strong>Fase 2 Hardening:</strong> $8k–$90k USD según escala<br>
-• <strong>Fase 3 Retainer:</strong> desde $2,500/mes<br>
-• <em>Startups Beta: desde $185 USD</em>`,
-            quickReplies: [
-              { label: 'Ver Servicios Completos', value: 'Ir a servicios' },
-              { label: 'Calificar mi Proyecto', value: 'Ir a calificar' }
-            ]
-          };
-        }
-        if (intent.topic === 'vibe') {
-          return {
-            text: `⚡ <strong>Especializados en Vibe-to-Prod:</strong><br>
-Rescatamos proyectos creados en Lovable, Replit, Bolt.new, Cursor y v0.dev. Eliminamos marcas de agua, desacoplamos dependencias, y desplegamos en producción real con Docker + CI/CD en 2–4 semanas.`,
-            quickReplies: [
-              { label: 'Auditar Mi Sitio Ahora', value: 'Ir a la herramienta de auditoría' },
-              { label: 'Solicitar Vibe Audit', value: 'Ir a calificar' }
-            ]
-          };
-        }
-        if (intent.topic === 'security') {
-          return {
-            text: `🛡️ <strong>Cumplimiento Institucional:</strong><br>
-Implementamos AES-256, TLS 1.3, RBAC, RLS, JWT/OAuth2 y audit logs estructurados. Arquitectura compatible con ISO/IEC 27001 y SOC2 Type II para licitaciones B2G.`,
-            quickReplies: [
-              { label: 'Contactar Ingeniero Senior', value: 'Ir a contacto' }
-            ]
-          };
-        }
-        return {
-          text: `🚀 <strong>WEBLIFETECH</strong> es una firma de ingeniería Forward Deployed especializada en convertir MVPs de Vibe-Coding en plataformas enterprise robustas, seguras y escalables en semanas.`,
-          quickReplies: [
-            { label: 'Ver Servicios', value: 'Ir a servicios' },
-            { label: 'Evaluar Mi Proyecto', value: 'Ir a calificar' },
-            { label: 'Contactar', value: 'Ir a contacto' }
-          ]
-        };
-
-      case 'lead':
-        ingestLeadToCRM({ email: intent.email, page: pageInfo.path, session: STATE.sessionId, timestamp: new Date().toISOString() });
-        STATE.leadData.email = intent.email;
-        return {
-          text: `✅ ¡Recibido! Enviaré información técnica relevante a <strong>${intent.email}</strong>. ¿Le gustaría agendar una evaluación gratuita de 15 minutos?`,
-          quickReplies: [
-            { label: 'Sí, agendar ahora', value: 'Ir a calificar' },
-            { label: 'Ver Servicios', value: 'Ir a servicios' }
-          ]
-        };
-
-      default:
-        return {
-          text: `¿Cómo puedo ayudarle hoy? Puedo llevarle a cualquier sección del sitio, explicar nuestros servicios de Vibe-to-Prod Hardening, o conectarle directamente con un ingeniero senior.`,
-          quickReplies: [
-            { label: '📋 Servicios & Tarifas', value: 'Ir a servicios' },
-            { label: '🔍 Auditar Mi Sitio', value: 'Ir a la herramienta de auditoría' },
-            { label: '📞 Contactar', value: 'Ir a contacto' },
-            { label: '🏁 Calificar Proyecto', value: 'Ir a calificar' }
-          ]
-        };
-    }
-  }
-
-  // ── INGEST DE LEADS AL CRM AGÉNTICO ──────────────────────────
-  function ingestLeadToCRM(data) {
-    const payload = {
-      ...data,
-      ...STATE.leadData,
-      sourceUrl: window.location.href,
-      userAgent: navigator.userAgent,
-      agentId: CONFIG.agentId,
-      siteName: CONFIG.siteName,
-    };
-    if (navigator.sendBeacon) {
-      navigator.sendBeacon(CONFIG.crmEndpoint, JSON.stringify(payload));
-    } else {
-      fetch(CONFIG.crmEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        keepalive: true
-      }).catch(() => {});
-    }
-  }
-
-  // ── ENVÍO DE MENSAJE ──────────────────────────────────────────
-  async function sendMessage(text, isQuickReply) {
-    if (!text.trim()) return;
-    const input = document.getElementById('wlt-input');
-    if (input && !isQuickReply) input.value = '';
-    
     addMessage('user', text);
-    const typing = showTyping();
+    showTyping();
 
-    // Log interaction to CRM
-    ingestLeadToCRM({
-      event: 'chat_message',
-      message: text,
-      page: STATE.currentPage,
-      session: STATE.sessionId
-    });
+    ingestContextToAikrofyRAG({ event: 'user_message', message: text });
 
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 800));
+    await new Promise(r => setTimeout(r, 450));
     removeTyping();
 
     const intent = parseIntent(text);
-    const response = generateAgentResponse(intent, text);
-    addMessage('agent', response.text, response.quickReplies);
+
+    if (intent.type === 'navigate') {
+      const page = CANONICAL_PAGES.find(p => p.path === intent.path);
+      navigateTo(intent.path);
+
+      const msg = STATE.lang === 'es'
+        ? `🚀 Navegando a <strong>${page?.label}</strong>. ${page?.descEs}`
+        : `🚀 Navigating to <strong>${page?.labelEn}</strong>. ${page?.descEn}`;
+
+      addMessage('agent', msg, [
+        { label: STATE.lang === 'es' ? 'Ver Servicios' : 'View Services', value: 'Ir a servicios' },
+        { label: STATE.lang === 'es' ? 'Auditar Web' : 'Audit Website', value: 'Ir a audit tool' }
+      ]);
+      return;
+    }
+
+    // Respuesta general asistida
+    const resp = STATE.lang === 'es'
+      ? `He recibido su consulta. Como sistema agéntico conectado a <strong>Aikrofy</strong>, puedo guiarle por el sitio, auditar su arquitectura de código o calificar su MVP para producción.`
+      : `I received your query. As an agentic system powered by <strong>Aikrofy</strong>, I can navigate the site, audit your codebase architecture or qualify your MVP for enterprise production.`;
+
+    addMessage('agent', resp, [
+      { label: STATE.lang === 'es' ? '🔍 Auditar Mi Web' : '🔍 Audit My Website', value: 'Ir a audit tool' },
+      { label: STATE.lang === 'es' ? '📋 Ver Tarifario' : '📋 Pricing Table', value: 'Ir a servicios' },
+      { label: STATE.lang === 'es' ? '🏁 Calificar Proyecto' : '🏁 Qualify Project', value: 'Ir a calificar' }
+    ]);
   }
 
   // ── TOGGLE PANEL ──────────────────────────────────────────────
   function togglePanel() {
     STATE.open = !STATE.open;
-    const panel = document.getElementById('wlt-panel');
-    panel.classList.toggle('wlt-open', STATE.open);
+    const panel = document.getElementById('aikrofy-panel');
+    if (!panel) return;
+
+    panel.classList.toggle('aik-open', STATE.open);
 
     if (STATE.open && STATE.history.length === 0) {
-      const pageInfo = SITE_MAP.getCurrentPageInfo();
+      const texts = I18N[STATE.lang];
       setTimeout(() => {
         addMessage('agent',
-          `👋 Hola, soy el <strong>Asesor IA de WEBLIFETECH</strong>. Está en <em>${pageInfo.label}</em>.<br>Puedo llevarle a cualquier sección, responder preguntas técnicas, o conectarle con nuestro equipo de ingeniería.`,
+          `${texts.welcome}<br>${texts.currentIn} <em>${window.location.pathname}</em>.<br>${texts.helpPrompt}`,
           [
-            { label: '📋 Ver Servicios', value: 'Ir a servicios' },
-            { label: '🔍 AuditWLT Tool', value: 'Ir a la herramienta de auditoría' },
-            { label: '📞 Hablar con Ingeniero', value: 'Ir a contacto' }
+            { label: texts.navServices, value: 'Ir a servicios' },
+            { label: texts.navAudit, value: 'Ir a audit tool' },
+            { label: texts.navCalificar, value: 'Ir a calificar' }
           ]
         );
-      }, 400);
-    }
-
-    if (STATE.open) {
-      ingestLeadToCRM({ event: 'chat_opened', page: STATE.currentPage, session: STATE.sessionId });
+      }, 300);
     }
   }
 
-  // ── BINDINGS DE EVENTOS ───────────────────────────────────────
+  function updateNavBar() {
+    document.querySelectorAll('.aik-pill-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-path') === window.location.pathname);
+    });
+  }
+
+  // ── EVENT BINDINGS ────────────────────────────────────────────
   function bindEvents() {
-    // FAB button
-    document.getElementById('wlt-fab').addEventListener('click', togglePanel);
-    
-    // Close button
-    document.getElementById('wlt-close-btn').addEventListener('click', () => {
-      STATE.open = false;
-      document.getElementById('wlt-panel').classList.remove('wlt-open');
+    document.getElementById('aikrofy-fab')?.addEventListener('click', togglePanel);
+    document.getElementById('aikrofy-close-btn')?.addEventListener('click', togglePanel);
+    document.getElementById('aikrofy-mic-btn')?.addEventListener('click', toggleVoiceRecording);
+
+    document.getElementById('aik-toggle-lang')?.addEventListener('click', () => {
+      STATE.lang = STATE.lang === 'es' ? 'en' : 'es';
+      const btn = document.getElementById('aik-toggle-lang');
+      if (btn) btn.textContent = STATE.lang.toUpperCase();
+      
+      const input = document.getElementById('aikrofy-input');
+      if (input) input.placeholder = I18N[STATE.lang].inputPlaceholder;
+
+      // Disparar evento global
+      window.dispatchEvent(new CustomEvent('wlt:lang-changed', { detail: { lang: STATE.lang } }));
     });
 
-    // Nav buttons
-    document.querySelectorAll('.wlt-nav-btn').forEach(btn => {
+    document.querySelectorAll('.aik-pill-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const path = btn.getAttribute('data-path');
-        sendMessage('Ir a ' + btn.textContent, true);
+        if (path) navigateTo(path);
       });
     });
 
-    // Send button
-    document.getElementById('wlt-send-btn').addEventListener('click', () => {
-      const val = document.getElementById('wlt-input').value.trim();
+    document.getElementById('aikrofy-send-btn')?.addEventListener('click', () => {
+      const val = document.getElementById('aikrofy-input')?.value;
       if (val) sendMessage(val);
     });
 
-    // Enter key to send
-    document.getElementById('wlt-input').addEventListener('keydown', (e) => {
+    document.getElementById('aikrofy-input')?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        const val = e.target.value.trim();
+        const val = e.target.value;
         if (val) sendMessage(val);
       }
     });
 
-    // Track page navigation (SPA support via History API)
-    const origPushState = window.history.pushState.bind(window.history);
-    window.history.pushState = function (...args) {
-      origPushState(...args);
-      STATE.currentPage = window.location.pathname;
-      updateNavBar();
-    };
+    // Escuchar eventos externos de la app o de subagentes
+    window.addEventListener('wlt:open-voice-chat', () => {
+      if (!STATE.open) togglePanel();
+      toggleVoiceRecording();
+    });
+
+    window.addEventListener('wlt:lang-changed', (e) => {
+      if (e.detail?.lang) {
+        STATE.lang = e.detail.lang;
+        const btn = document.getElementById('aik-toggle-lang');
+        if (btn) btn.textContent = STATE.lang.toUpperCase();
+      }
+    });
+
     window.addEventListener('popstate', () => {
       STATE.currentPage = window.location.pathname;
       updateNavBar();
+      ingestContextToAikrofyRAG({ event: 'history_popstate' });
     });
   }
 
-  function updateNavBar() {
-    document.querySelectorAll('.wlt-nav-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-path') === STATE.currentPage);
-    });
-  }
-
-  // ── INICIALIZACIÓN ────────────────────────────────────────────
   function init() {
-    if (STATE.initialized) return;
-    STATE.initialized = true;
-
+    discoverSiteHierarchy();
     injectStyles();
     buildWidget();
     bindEvents();
     updateNavBar();
-
-    // Track page view to CRM
-    ingestLeadToCRM({ event: 'page_view', page: STATE.currentPage, session: STATE.sessionId, referrer: document.referrer });
-
-    console.log('[WLT Agent] ⚡ Conversational Navigator initialized. Session:', STATE.sessionId);
+    ingestContextToAikrofyRAG({ event: 'init_session' });
   }
 
   if (document.readyState === 'loading') {

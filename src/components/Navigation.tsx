@@ -2,26 +2,38 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, Terminal, Cpu, Briefcase, FileText, PhoneCall, Sparkles } from "lucide-react";
+import { Zap, Terminal, Cpu, Briefcase, FileText, PhoneCall, Sparkles, Globe, Mic, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/LanguageContext";
 
 export function Navigation() {
   const pathname = usePathname();
+  const { lang, setLang, t } = useLanguage();
 
   const links = [
-    { href: "/", label: "Home", icon: Terminal },
-    { href: "/lab", label: "Labs R&D", icon: Cpu },
-    { href: "/agency", label: "Agencia FDE", icon: Briefcase },
-    { href: "/servicios", label: "Servicios & Tarifas", icon: FileText },
-    { href: "/contacto", label: "Contacto", icon: PhoneCall },
+    { href: "/", label: t('nav.home'), icon: Terminal },
+    { href: "/lab", label: t('nav.lab'), icon: Cpu },
+    { href: "/agency", label: t('nav.agency'), icon: Briefcase },
+    { href: "/servicios", label: t('nav.services'), icon: FileText },
+    { href: "/contacto", label: t('nav.contact'), icon: PhoneCall },
   ];
 
+  const toggleLanguage = () => {
+    setLang(lang === 'es' ? 'en' : 'es');
+  };
+
+  const openVoiceChat = () => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('wlt:open-voice-chat', {}));
+    }
+  };
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-white/10 transition-all">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-2xl border-b border-white/10 transition-all">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary via-blue-600 to-cyan-400 p-[1px] shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-500 p-[1px] shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
             <div className="w-full h-full bg-background rounded-[11px] flex items-center justify-center">
               <Zap className="h-5 w-5 text-cyan-400 group-hover:rotate-12 transition-transform" />
             </div>
@@ -50,7 +62,7 @@ export function Navigation() {
                 href={link.href}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold tracking-wide transition-all ${
                   isActive
-                    ? "bg-primary text-white shadow-md shadow-primary/30 font-bold"
+                    ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md shadow-cyan-500/20 font-bold"
                     : "text-muted-foreground hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -61,8 +73,29 @@ export function Navigation() {
           })}
         </nav>
 
-        {/* CTAs */}
+        {/* CTAs & Controls */}
         <div className="flex items-center gap-3">
+          {/* Selector de Idioma */}
+          <button
+            onClick={toggleLanguage}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-mono text-cyan-300 transition-colors"
+            title="Cambiar idioma (ES / EN)"
+          >
+            <Globe className="h-3.5 w-3.5 text-cyan-400" />
+            <span className="font-bold uppercase">{lang}</span>
+          </button>
+
+          {/* Botón rápido de Voz AI */}
+          <button
+            onClick={openVoiceChat}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-xs font-mono text-cyan-300 transition-colors"
+            title="Activar Asistente de Voz AI"
+          >
+            <Mic className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
+            <span>Voice AI</span>
+          </button>
+
+          {/* Audit Tool */}
           <Link href="/tools/auditwlt">
             <Button
               variant="outline"
@@ -70,16 +103,17 @@ export function Navigation() {
               className="hidden lg:flex border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/10 hover:text-cyan-200 rounded-full font-mono text-xs gap-2"
             >
               <Sparkles className="h-3.5 w-3.5 text-cyan-400 animate-pulse" />
-              AuditWLT Tool
+              {t('nav.auditTool')}
             </Button>
           </Link>
 
+          {/* Calificar CTA */}
           <Link href="/calificar">
             <Button
               size="sm"
               className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-full px-5 shadow-lg shadow-orange-500/20 text-xs tracking-wide"
             >
-              Vibe Audit en 5 Días →
+              {t('nav.qualifyCta')}
             </Button>
           </Link>
         </div>
