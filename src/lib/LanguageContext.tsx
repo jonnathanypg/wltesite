@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type Language = 'es' | 'en';
 
@@ -107,16 +109,16 @@ export const DICTIONARY: Record<Language, Record<string, string>> = {
   }
 };
 
-const LanguageContext = React.createContext<LanguageContextType>({
+const LanguageContext = createContext<LanguageContextType>({
   lang: 'es',
   setLang: () => {},
   t: (key: string) => key,
 });
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = React.useState<Language>('es');
+  const [lang, setLangState] = useState<Language>('es');
 
-  React.useEffect(() => {
+  useEffect(() => {
     const saved = localStorage.getItem('wlt_lang') as Language;
     if (saved === 'es' || saved === 'en') {
       setLangState(saved);
@@ -126,7 +128,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const setLang = (newLang: Language) => {
     setLangState(newLang);
     localStorage.setItem('wlt_lang', newLang);
-    // Notificar al widget de chat para que adapte su idioma
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('wlt:lang-changed', { detail: { lang: newLang } }));
     }
@@ -144,5 +145,5 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useLanguage() {
-  return React.useContext(LanguageContext);
+  return useContext(LanguageContext);
 }
