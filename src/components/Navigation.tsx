@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Zap, Terminal, Cpu, Briefcase, FileText, PhoneCall, Sparkles, Globe, Mic, Volume2 } from "lucide-react";
+import { Terminal, Cpu, Briefcase, FileText, PhoneCall, Sparkles, Globe, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/LanguageContext";
 
@@ -31,25 +31,16 @@ export function Navigation() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-2xl border-b border-white/10 transition-all">
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-500 p-[1px] shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-background rounded-[11px] flex items-center justify-center">
-              <Zap className="h-5 w-5 text-cyan-400 group-hover:rotate-12 transition-transform" />
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <span className="font-headline font-bold text-lg tracking-tight flex items-center gap-1.5 text-white">
-              WEBLIFETECH
-              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                PROD
-              </span>
-            </span>
-            <span className="text-[10px] text-muted-foreground tracking-widest uppercase font-mono">
-              AI & Software Engineering
-            </span>
-          </div>
+        {/* Logo oficial WEBLIFETECH */}
+        <Link href="/" className="flex items-center group">
+          <img
+            src="/logos/logo-header.png"
+            alt="WEBLIFETECH — Innovate Faster, Grow Smarter"
+            className="h-12 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_12px_rgba(0,150,255,0.3)]"
+            style={{ maxWidth: 260 }}
+          />
         </Link>
+
 
         {/* Navigation Links */}
         <nav className="hidden md:flex items-center gap-1 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 backdrop-blur-md">
