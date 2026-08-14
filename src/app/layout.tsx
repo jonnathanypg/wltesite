@@ -23,10 +23,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-        {/* WLT Conversational Navigator — se auto-instala en el sitio como demo */}
+        {/* WLT Conversational Navigator & Aikrofy Universal Webchat */}
         <script
           src="/agent/wlt-chat.js"
           data-agent-id="wlt-site-main"
+          data-widget-id="f97f9776-e3e5-4891-ad7f-5e54f91462c1"
           data-api-url="https://api.weblifetech.com"
           data-crm-endpoint="https://crm.weblifetech.com/ingest"
           data-theme="dark"
