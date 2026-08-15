@@ -3,9 +3,42 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Terminal, Cpu, Briefcase, FileText, PhoneCall, Sparkles, Search, X, Menu } from "lucide-react";
+import { Terminal, Cpu, Briefcase, FileText, PhoneCall, Search, X, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/lib/LanguageContext";
+
+function SpainFlag() {
+  return (
+    <svg viewBox="0 0 750 500" className="w-full h-full object-cover scale-[1.35]" xmlns="http://www.w3.org/2000/svg">
+      <rect width="750" height="500" fill="#c60b1e" />
+      <rect width="750" height="250" y="125" fill="#ffc400" />
+      <g transform="translate(190, 200) scale(0.95)">
+        <path d="M0 0 h50 v42 a25 25 0 0 1 -50 0 z" fill="#c60b1e" stroke="#ffc400" strokeWidth="4" />
+        <path d="M10 10 h30 v25 a15 15 0 0 1 -30 0 z" fill="#ffc400" />
+        <circle cx="25" cy="22" r="7" fill="#0035a0" />
+        <path d="M-10 -15 h70 v10 h-70 z" fill="#ffc400" rx="2" />
+        <circle cx="25" cy="-22" r="5" fill="#c60b1e" />
+      </g>
+    </svg>
+  );
+}
+
+function USAFlag() {
+  return (
+    <svg viewBox="0 0 741 390" className="w-full h-full object-cover scale-[1.35]" xmlns="http://www.w3.org/2000/svg">
+      <rect width="741" height="390" fill="#b22234" />
+      <path d="M0,30H741M0,90H741M0,150H741M0,210H741M0,270H741M0,330H741" stroke="#fff" strokeWidth="30" />
+      <rect width="296.4" height="210" fill="#3c3b6e" />
+      <g fill="#fff">
+        <circle cx="35" cy="25" r="8" /><circle cx="85" cy="25" r="8" /><circle cx="135" cy="25" r="8" /><circle cx="185" cy="25" r="8" /><circle cx="235" cy="25" r="8" />
+        <circle cx="60" cy="55" r="8" /><circle cx="110" cy="55" r="8" /><circle cx="160" cy="55" r="8" /><circle cx="210" cy="55" r="8" />
+        <circle cx="35" cy="85" r="8" /><circle cx="85" cy="85" r="8" /><circle cx="135" cy="85" r="8" /><circle cx="185" cy="85" r="8" /><circle cx="235" cy="85" r="8" />
+        <circle cx="60" cy="115" r="8" /><circle cx="110" cy="115" r="8" /><circle cx="160" cy="115" r="8" /><circle cx="210" cy="115" r="8" />
+        <circle cx="35" cy="145" r="8" /><circle cx="85" cy="145" r="8" /><circle cx="135" cy="145" r="8" /><circle cx="185" cy="145" r="8" /><circle cx="235" cy="145" r="8" />
+      </g>
+    </svg>
+  );
+}
 
 export function Navigation() {
   const pathname = usePathname();
@@ -24,9 +57,7 @@ export function Navigation() {
     setLang(lang === 'es' ? 'en' : 'es');
   };
 
-  const flagEmoji = lang === 'es' ? '🇪🇸' : '🇺🇸';
   const nextLang = lang === 'es' ? 'en' : 'es';
-  const nextFlag = lang === 'es' ? '🇺🇸' : '🇪🇸';
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-2xl border-b border-white/10 transition-all">
@@ -64,14 +95,15 @@ export function Navigation() {
         </nav>
 
         {/* CTAs & Controls — Desktop */}
-        <div className="hidden md:flex items-center gap-2">
-          {/* Language Selector — circular flag button like Aikrofy */}
+        <div className="hidden md:flex items-center gap-2.5">
+          {/* Language Selector — SVG flag button covering the entire circle */}
           <button
             onClick={toggleLanguage}
-            title={`Switch to ${nextLang.toUpperCase()} (${nextFlag})`}
-            className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-white/20 hover:border-cyan-400/60 transition-all duration-200 hover:scale-110 shadow-md group flex items-center justify-center bg-white/5 hover:bg-white/10"
+            title={lang === 'es' ? 'Switch to English (US)' : 'Cambiar a Español (ES)'}
+            className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 hover:border-cyan-400 transition-all duration-200 hover:scale-110 shadow-lg group flex items-center justify-center bg-black/40 focus:outline-none"
+            aria-label={`Change language to ${nextLang.toUpperCase()}`}
           >
-            <span className="text-xl leading-none select-none">{flagEmoji}</span>
+            {lang === 'es' ? <SpainFlag /> : <USAFlag />}
           </button>
 
           {/* CTA 1 — Analizar Web */}
@@ -97,18 +129,19 @@ export function Navigation() {
           </Link>
         </div>
 
-        {/* Mobile Right — flag + hamburger */}
+        {/* Mobile Right — SVG Flag + hamburger */}
         <div className="flex md:hidden items-center gap-2">
           <button
             onClick={toggleLanguage}
-            title={`Switch to ${nextLang.toUpperCase()}`}
-            className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/20 hover:border-cyan-400/60 transition-all duration-200 flex items-center justify-center bg-white/5"
+            title={lang === 'es' ? 'Switch to English (US)' : 'Cambiar a Español (ES)'}
+            className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 hover:border-cyan-400 transition-all duration-200 flex items-center justify-center bg-black/40 focus:outline-none"
+            aria-label={`Change language to ${nextLang.toUpperCase()}`}
           >
-            <span className="text-xl leading-none select-none">{flagEmoji}</span>
+            {lang === 'es' ? <SpainFlag /> : <USAFlag />}
           </button>
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="w-9 h-9 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors focus:outline-none"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X className="h-4 w-4 text-white" /> : <Menu className="h-4 w-4 text-muted-foreground" />}

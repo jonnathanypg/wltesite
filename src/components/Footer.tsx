@@ -34,19 +34,19 @@ export function Footer() {
         {/* Top section: 3 columns */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-start mb-12">
 
-          {/* Column 1: Brand */}
-          <div className="col-span-1 flex flex-col gap-5">
-            <Link href="/" className="group inline-block">
-              <img
-                src="/logos/logo-header.png"
-                alt="WEBLIFETECH — Innovate Faster, Grow Smarter"
-                className="h-14 w-auto object-contain group-hover:scale-105 transition-transform duration-300 drop-shadow-[0_0_20px_rgba(0,100,255,0.25)]"
-                style={{ maxWidth: 240 }}
-              />
-            </Link>
+          {/* Column 1: Core Value Proposition & Contact (No repeated logo) */}
+          <div className="col-span-1 flex flex-col gap-4">
+            <h3 className="text-lg font-headline font-bold text-white tracking-tight">
+              WEBLIFETECH
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
+              {lang === "es"
+                ? "Convertimos MVPs de Vibe Coding en infraestructura enterprise. Reingeniería con IA, seguridad y despliegues en semanas."
+                : "We turn Vibe Coding MVPs into enterprise infrastructure. AI-driven re-engineering, security, and deployment in weeks."}
+            </p>
 
             {/* Contact badges */}
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 mt-2">
               <a
                 href="https://wa.me/message/WLT"
                 target="_blank"
@@ -62,18 +62,11 @@ export function Footer() {
                 <span>✉️</span> Email
               </a>
             </div>
-
-            {/* Short tagline below socials */}
-            <p className="text-xs text-muted-foreground leading-relaxed max-w-xs font-mono">
-              {lang === "es"
-                ? "Reingeniería con IA. Producción enterprise en semanas."
-                : "AI-powered re-engineering. Enterprise production in weeks."}
-            </p>
           </div>
 
           {/* Column 2: Navigation */}
           <div className="col-span-1">
-            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-5">
+            <p className="text-xs font-mono text-muted-foreground uppercase tracking-widest mb-4">
               {lang === "es" ? "Navegación" : "Navigation"}
             </p>
             <ul className="space-y-2.5">
@@ -90,16 +83,15 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Logo square (isotipo + text) */}
-          <div className="col-span-1 flex flex-col items-center md:items-end justify-start">
+          {/* Column 3: Square 1x1 Brand Logo (Isotipo + Text) - Balanced position */}
+          <div className="col-span-1 flex flex-col items-start md:items-center justify-center">
             <div className="relative group">
-              <div className="absolute inset-0 bg-blue-500/10 rounded-2xl blur-2xl scale-110 opacity-60" />
-              <Link href="/" className="relative block">
+              <div className="absolute inset-0 bg-blue-500/15 rounded-3xl blur-2xl scale-110 opacity-70 group-hover:opacity-100 transition-opacity" />
+              <Link href="/" className="relative block p-2 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/30 transition-all shadow-xl">
                 <img
-                  src="/logos/logo-header.png"
-                  alt="WEBLIFETECH"
-                  className="relative h-20 w-auto object-contain drop-shadow-[0_8px_24px_rgba(0,100,255,0.35)] hover:scale-105 transition-transform duration-500 opacity-80 hover:opacity-100"
-                  style={{ maxWidth: 180 }}
+                  src="/logos/logo-og.png"
+                  alt="WEBLIFETECH — Innovate Faster, Grow Smarter"
+                  className="h-28 w-28 sm:h-32 sm:w-32 object-contain drop-shadow-[0_8px_24px_rgba(0,100,255,0.3)] hover:scale-105 transition-transform duration-300 rounded-xl"
                 />
               </Link>
             </div>
@@ -111,9 +103,9 @@ export function Footer() {
         <div className="border-t border-white/8 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <img
-              src="/logos/isotipo-robot.png"
+              src="/logos/logo-192.png"
               alt="WLT"
-              className="h-5 w-5 object-contain opacity-50"
+              className="h-5 w-5 object-contain opacity-60"
             />
             <p className="text-xs text-muted-foreground font-mono">
               © {new Date().getFullYear()} WEBLIFETECH.{" "}
