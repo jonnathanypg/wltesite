@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'wlt-site-prod',
       script: 'node_modules/next/dist/bin/next',
-      args: 'start -p 9002',
+      args: 'start',
       cwd: './',
       instances: 'max',
       exec_mode: 'cluster',
@@ -12,11 +12,11 @@ module.exports = {
       max_memory_restart: '1G',
       env: {
         NODE_ENV: 'production',
-        PORT: 9002
+        PORT: process.env.PORT || 3000
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 9002
+        PORT: process.env.PORT || 3000
       }
     }
   ]

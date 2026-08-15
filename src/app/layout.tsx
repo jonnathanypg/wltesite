@@ -49,18 +49,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-        {/* WLT Conversational Navigator & Aikrofy Universal Webchat */}
+        {/* Aikrofy Conversational Webchat & CRM Lead Capture */}
         <script
-          src="/agent/wlt-chat.js"
-          data-agent-id="wlt-site-main"
+          src="https://app.aikrofy.com/widget.js"
           data-widget-id="f97f9776-e3e5-4891-ad7f-5e54f91462c1"
-          data-api-url="https://api.weblifetech.com"
-          data-crm-endpoint="https://crm.weblifetech.com/ingest"
-          data-theme="dark"
-          data-brand-color="#00E5FF"
-          data-brand-secondary="#FF6B00"
-          data-lang="es"
-          data-site-name="WEBLIFETECH"
           async
         />
       </head>

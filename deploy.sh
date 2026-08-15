@@ -10,7 +10,7 @@
 set -e
 
 APP_NAME="wlt-site-prod"
-PORT=9002
+PORT="${PORT:-3000}"
 PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "🚀 [1/5] Iniciando despliegue de producción para: $APP_NAME"
