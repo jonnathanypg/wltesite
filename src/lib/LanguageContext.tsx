@@ -44,11 +44,11 @@ export const DICTIONARY: Record<Language, Record<string, string>> = {
     'pain.item4.desc': 'Incapacidad de superar auditorías de ciberseguridad corporativa, RBAC o normativas ISO/SOC2.',
 
     // ── Comparison Table ─────────────────────────────────────
-    'comp.badge': 'WEBLIFETECH OCÉANO AZUL',
+    'comp.badge': 'SIN REESCRIBIR',
     'comp.title': 'No tire a la basura su MVP. Nosotros respetamos su trabajo y lo escalamos.',
     'comp.colDim': 'Dimensión de Análisis',
-    'comp.colRed': 'Agencias Tradicionales (Océano Rojo)',
-    'comp.colBlue': 'WEBLIFETECH (Océano Azul)',
+    'comp.colRed': 'Agencias Tradicionales',
+    'comp.colBlue': 'WEBLIFETECH',
     'comp.row1.dim': 'Tratamiento de su MVP',
     'comp.row1.red': '"Lo que hizo en IA no sirve; debemos rehacerlo de cero."',
     'comp.row1.blue': 'Auditamos, extraemos la lógica validada y la refactorizamos.',
@@ -102,9 +102,9 @@ export const DICTIONARY: Record<Language, Record<string, string>> = {
 
     // ── Social Proof ─────────────────────────────────────────
     'social.badge': 'CASO DE ÉXITO DESTACADO',
-    'social.quote': '"En solo 7 días, WEBLIFETECH extrajo nuestro MVP desde Lovable, eliminó las marcas de agua y dependencias de suscripción, estructuró nuestro repositorio Git en ramas Dev/Prod y configuró una PWA comercial con checkout directo a WhatsApp. Transformaron un prototipo visual en un activo digital propio y seguro."',
-    'social.author': 'Adrián Vinueza',
-    'social.role': 'Fundador de AURIVA - Agua Alcalina',
+    'social.quote': '"En solo 3 días, WEBLIFETECH extrajo nuestro MVP desde Lovable, eliminó las marcas de agua y dependencias de suscripción, estructuró nuestro repositorio Git en ramas Dev/Prod y configuró una PWA comercial con checkout directo a WhatsApp. Transformaron un prototipo visual en un activo digital propio y seguro."',
+    'social.author': 'Sebastián Mora',
+    'social.role': 'Emprendedor serial',
 
     // ── Final CTA ────────────────────────────────────────────
     'cta.title': '¿Listo para transformar su prototipo en una plataforma enterprise?',
@@ -154,11 +154,11 @@ export const DICTIONARY: Record<Language, Record<string, string>> = {
     'pain.item4.desc': 'Failure to pass corporate cybersecurity audits, RBAC or ISO/SOC2 compliance checks.',
 
     // ── Comparison Table ─────────────────────────────────────
-    'comp.badge': 'WEBLIFETECH BLUE OCEAN',
+    'comp.badge': 'NO REWRITES',
     'comp.title': 'Do not throw your MVP away. We respect your validation and scale it.',
     'comp.colDim': 'Analysis Dimension',
-    'comp.colRed': 'Traditional Agencies (Red Ocean)',
-    'comp.colBlue': 'WEBLIFETECH (Blue Ocean)',
+    'comp.colRed': 'Traditional Agencies',
+    'comp.colBlue': 'WEBLIFETECH',
     'comp.row1.dim': 'MVP Treatment',
     'comp.row1.red': '"What you built with AI is useless; we must rebuild from scratch."',
     'comp.row1.blue': 'We audit, extract the validated logic, and refactor it.',
@@ -212,9 +212,9 @@ export const DICTIONARY: Record<Language, Record<string, string>> = {
 
     // ── Social Proof ─────────────────────────────────────────
     'social.badge': 'FEATURED SUCCESS STORY',
-    'social.quote': '"In just 7 days, WEBLIFETECH extracted our MVP from Lovable, removed watermarks and subscription dependencies, structured our Git repository into Dev/Prod branches and set up a commercial PWA with direct WhatsApp checkout. They turned a visual prototype into a secure, owned digital asset."',
-    'social.author': 'Adrián Vinueza',
-    'social.role': 'Founder of AURIVA - Alkaline Water',
+    'social.quote': '"In just 3 days, WEBLIFETECH extracted our MVP from Lovable, removed watermarks and subscription dependencies, structured our Git repository into Dev/Prod branches and set up a commercial PWA with direct WhatsApp checkout. They turned a visual prototype into a secure, owned digital asset."',
+    'social.author': 'Sebastián Mora',
+    'social.role': 'Serial Entrepreneur',
 
     // ── Final CTA ────────────────────────────────────────────
     'cta.title': 'Ready to transform your prototype into an enterprise platform?',

@@ -246,7 +246,7 @@ export default function Home() {
           </blockquote>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-orange-500/20 border border-orange-500/30 flex items-center justify-center font-bold text-orange-400">
-              AV
+              SM
             </div>
             <div>
               <div className="font-bold text-white">{t('social.author')}</div>
