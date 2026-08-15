@@ -1,15 +1,13 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Cpu, Network, Database, Server, ArrowRight, Terminal, Shield, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+"use client";
 
-export const metadata: Metadata = {
-  title: 'WEBLIFETECH Labs | R&D en Infraestructura Agéntica e IA',
-  description: 'El laboratorio de investigación avanzada de WEBLIFETECH. Desarrollamos agentes autónomos, canalizaciones RAG soberanas y sistemas inteligentes para la gestión socioeconómica.',
-  keywords: ['IA Agéntica LatAm', 'R&D Sistemas Multi-Agente', 'Sovereign RAG', 'Modelos de Lenguaje para Gestión Pública', 'WEBLIFETECH Research']
-};
+import Link from 'next/link';
+import { Cpu, Network, Database, Server, Terminal, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function LabPage() {
+  const { lang } = useLanguage();
+
   return (
     <main className="min-h-screen bg-grid relative pb-24 selection:bg-cyan-500/30">
       
@@ -23,12 +21,17 @@ export default function LabPage() {
           </div>
           
           <h1 className="text-4xl sm:text-6xl font-headline font-bold text-white mb-6 leading-tight">
-            Investigando el Estado del Arte en <br />
-            <span className="text-cyan-400">Infraestructura Agéntica</span> y Soluciones Socioeconómicas.
+            {lang === 'es' ? 'Investigando el Estado del Arte en' : 'Researching the State of the Art in'} <br />
+            <span className="text-cyan-400">
+              {lang === 'es' ? 'Infraestructura Agéntica' : 'Agentic Infrastructure'}
+            </span>{' '}
+            {lang === 'es' ? 'y Soluciones Socioeconómicas.' : 'and Socioeconomic Solutions.'}
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
-            Donde la teoría de la Inteligencia Artificial Generativa se convierte en motores de software de grado industrial para América Latina y el mundo.
+            {lang === 'es'
+              ? 'Donde la teoría de la Inteligencia Artificial Generativa se convierte en motores de software de grado industrial para América Latina y el mundo.'
+              : 'Where Generative AI theory becomes industrial-grade software engines for Latin America and the world.'}
           </p>
         </div>
       </section>
@@ -36,7 +39,7 @@ export default function LabPage() {
       {/* LÍNEAS PRINCIPALES DE INVESTIGACIÓN */}
       <section className="max-w-6xl mx-auto px-6 py-16 border-t border-white/5">
         <h2 className="text-2xl font-headline font-bold text-white mb-8 flex items-center gap-2">
-          <Terminal className="h-5 w-5 text-cyan-400" /> Líneas Principales de Investigación
+          <Terminal className="h-5 w-5 text-cyan-400" /> {lang === 'es' ? 'Líneas Principales de Investigación' : 'Main Research Lines'}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -46,7 +49,9 @@ export default function LabPage() {
               1. Multi-Agent Swarms & Workflow Orchestration
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Investigación en la coordinación de agentes autónomos especializados capaces de ejecutar tareas complejas de refactorización de código, análisis sintáctico (AST) y resolución de tareas operativas sin supervisión humana continua.
+              {lang === 'es'
+                ? 'Investigación en la coordinación de agentes autónomos especializados capaces de ejecutar tareas complejas de refactorización de código, análisis sintáctico (AST) y resolución de tareas operativas sin supervisión humana continua.'
+                : 'Research on coordinating specialized autonomous agents capable of performing complex code refactoring tasks, syntactic analysis (AST), and operational task resolution without continuous human supervision.'}
             </p>
           </div>
 
@@ -56,7 +61,9 @@ export default function LabPage() {
               2. Sovereign RAG & Knowledge Graphs
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Desarrollo de arquitecturas RAG (Retrieval-Augmented Generation) de alta precisión con privacidad garantizada, diseñadas para procesar grandes volúmenes de legislación, contratos públicos y documentación técnica corporativa.
+              {lang === 'es'
+                ? 'Desarrollo de arquitecturas RAG (Retrieval-Augmented Generation) de alta precisión con privacidad garantizada, diseñadas para procesar grandes volúmenes de legislación, contratos públicos y documentación técnica corporativa.'
+                : 'Development of high-precision RAG (Retrieval-Augmented Generation) architectures with guaranteed privacy, designed to process large volumes of legislation, public contracts, and corporate technical documentation.'}
             </p>
           </div>
 
@@ -66,7 +73,9 @@ export default function LabPage() {
               3. AI-Driven Socioeconomic Infrastructure
             </h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Sistemas inteligentes orientados a la optimización de recursos comunitarios, análisis predictivo para desarrollo regional y automatización de procesos B2G en economías emergentes.
+              {lang === 'es'
+                ? 'Sistemas inteligentes orientados a la optimización de recursos comunitarios, análisis predictivo para desarrollo regional y automatización de procesos B2G en economías emergentes.'
+                : 'Intelligent systems aimed at community resource optimization, predictive analytics for regional development, and B2G process automation in emerging economies.'}
             </p>
           </div>
         </div>
@@ -75,26 +84,38 @@ export default function LabPage() {
       {/* PROYECTOS Y EXPERIMENTOS ABIERTOS */}
       <section className="max-w-6xl mx-auto px-6 py-16 border-t border-white/5">
         <h2 className="text-2xl font-headline font-bold text-white mb-8 flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-cyan-400" /> Proyectos & Experimentos Abiertos
+          <Sparkles className="h-5 w-5 text-cyan-400" /> {lang === 'es' ? 'Proyectos & Experimentos Abiertos' : 'Open Projects & Experiments'}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="glass p-6 rounded-2xl border-white/10">
             <div className="text-xs font-mono text-cyan-400 mb-2 font-bold">[ENGINE]</div>
             <h4 className="text-lg font-bold text-white mb-2">Pipeline AST Code Refactorer</h4>
-            <p className="text-xs text-muted-foreground">Motor interno para la ingesta y desestructuración de repositorios sintéticos generados por Lovable/Replit.</p>
+            <p className="text-xs text-muted-foreground">
+              {lang === 'es'
+                ? 'Motor interno para la ingesta y desestructuración de repositorios sintéticos generados por Lovable/Replit.'
+                : 'Internal engine for ingesting and destructuring synthetic repositories generated by Lovable/Replit.'}
+            </p>
           </div>
 
           <div className="glass p-6 rounded-2xl border-white/10">
             <div className="text-xs font-mono text-cyan-400 mb-2 font-bold">[GOVTECH]</div>
             <h4 className="text-lg font-bold text-white mb-2">Agentic Public Ledger Tracker</h4>
-            <p className="text-xs text-muted-foreground">Agentes autónomos para el monitoreo y auditoría transparente de licitaciones públicas.</p>
+            <p className="text-xs text-muted-foreground">
+              {lang === 'es'
+                ? 'Agentes autónomos para el monitoreo y auditoría transparente de licitaciones públicas.'
+                : 'Autonomous agents for transparent monitoring and auditing of public bids.'}
+            </p>
           </div>
 
           <div className="glass p-6 rounded-2xl border-white/10">
             <div className="text-xs font-mono text-cyan-400 mb-2 font-bold">[SECURITY]</div>
             <h4 className="text-lg font-bold text-white mb-2">Local-First LLM Deployments</h4>
-            <p className="text-xs text-muted-foreground">Cómputo de modelos de lenguaje en infraestructura soberana local para sectores con alta restricción de privacidad.</p>
+            <p className="text-xs text-muted-foreground">
+              {lang === 'es'
+                ? 'Cómputo de modelos de lenguaje en infraestructura soberana local para sectores con alta restricción de privacidad.'
+                : 'Language model computation on sovereign local infrastructure for high privacy-restriction sectors.'}
+            </p>
           </div>
         </div>
       </section>
@@ -103,14 +124,20 @@ export default function LabPage() {
       <section className="max-w-4xl mx-auto px-6 py-16 border-t border-white/5 text-center">
         <div className="glass p-10 rounded-3xl border-cyan-500/30">
           <h2 className="text-3xl font-headline font-bold text-white mb-4">
-            De la Investigación a la Producción del Cliente
+            {lang === 'es'
+              ? 'De la Investigación a la Producción del Cliente'
+              : 'From Research to Client Production'}
           </h2>
           <p className="text-sm text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Cada avance logrado en WEBLIFETECH Labs se empaqueta de inmediato en herramientas internas que utiliza nuestra división de Agencia. Esto nos permite ejecutar refactorizaciones 4 veces más rápido que cualquier firma de ingeniería tradicional.
+            {lang === 'es'
+              ? 'Cada avance logrado en WEBLIFETECH Labs se empaqueta de inmediato en herramientas internas que utiliza nuestra división de Agencia. Esto nos permite ejecutar refactorizaciones 4 veces más rápido que cualquier firma de ingeniería tradicional.'
+              : 'Every breakthrough achieved at WEBLIFETECH Labs is immediately packaged into internal tools used by our Agency division. This allows us to execute refactoring 4x faster than any traditional engineering firm.'}
           </p>
           <Link href="/contacto">
             <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold rounded-full px-8">
-              ¿Interesado en una Colaboración Institucional o R&D? Contáctenos →
+              {lang === 'es'
+                ? '¿Interesado en una Colaboración Institucional o R&D? Contáctenos →'
+                : 'Interested in Institutional Collaboration or R&D? Contact Us →'}
             </Button>
           </Link>
         </div>

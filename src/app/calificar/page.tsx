@@ -1,12 +1,11 @@
-import type { Metadata } from 'next';
-import { CalificarWizard } from './CalificarWizard';
+"use client";
 
-export const metadata: Metadata = {
-  title: 'Formulario Dinámico de Calificación | WEBLIFETECH',
-  description: 'Formulario conversacional paso a paso con lógica condicional para calificar y enrutar prospectos de Vibe-to-Prod.',
-};
+import { CalificarWizard } from './CalificarWizard';
+import { useLanguage } from '@/lib/LanguageContext';
 
 export default function CalificarPage() {
+  const { lang } = useLanguage();
+
   return (
     <main className="min-h-screen bg-grid relative pb-24 selection:bg-orange-500/30">
       <section className="pt-12 pb-16 px-6 max-w-4xl mx-auto">
@@ -15,10 +14,14 @@ export default function CalificarPage() {
             ⚡ TRIAGE & QUALIFICATION PIPELINE
           </div>
           <h1 className="text-3xl sm:text-5xl font-headline font-bold text-white mb-3">
-            Evaluación Dinámica de Arquitectura & MVP
+            {lang === 'es'
+              ? 'Evaluación Dinámica de Arquitectura & MVP'
+              : 'Dynamic Architecture & MVP Evaluation'}
           </h1>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-            Responda 5 preguntas clave para enrutar su proyecto al equipo de ingeniería o al recurso técnico idóneo.
+            {lang === 'es'
+              ? 'Responda 5 preguntas clave para enrutar su proyecto al equipo de ingeniería o al recurso técnico idóneo.'
+              : 'Answer 5 key questions to route your project to the ideal engineering team or technical resource.'}
           </p>
         </div>
 
