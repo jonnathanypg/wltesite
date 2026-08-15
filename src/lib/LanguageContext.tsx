@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 export type Language = 'es' | 'en';
 
@@ -242,26 +242,34 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>('es');
 
   useEffect(() => {
-    const saved = localStorage.getItem('wlt_lang') as Language;
-    if (saved === 'es' || saved === 'en') {
-      setLangState(saved);
+    try {
+      const saved = localStorage.getItem('wlt_lang') as Language;
+      if (saved === 'es' || saved === 'en') {
+        setLangState(saved);
+      }
+    } catch (e) {
+      // Ignore SSR / localStorage errors
     }
   }, []);
 
-  const setLang = (newLang: Language) => {
+  const setLang = useCallback((newLang: Language) => {
     setLangState(newLang);
-    localStorage.setItem('wlt_lang', newLang);
+    try {
+      localStorage.setItem('wlt_lang', newLang);
+    } catch (e) {}
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('wlt:lang-changed', { detail: { lang: newLang } }));
     }
-  };
+  }, []);
 
-  const t = (key: string): string => {
+  const t = useCallback((key: string): string => {
     return DICTIONARY[lang][key] || DICTIONARY['es'][key] || key;
-  };
+  }, [lang]);
+
+  const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );

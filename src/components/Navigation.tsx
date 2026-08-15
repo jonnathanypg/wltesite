@@ -9,10 +9,10 @@ import { useLanguage } from "@/lib/LanguageContext";
 
 function SpainFlag() {
   return (
-    <svg viewBox="0 0 750 500" className="w-full h-full object-cover scale-[1.35]" xmlns="http://www.w3.org/2000/svg">
-      <rect width="750" height="500" fill="#c60b1e" />
-      <rect width="750" height="250" y="125" fill="#ffc400" />
-      <g transform="translate(190, 200) scale(0.95)">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="w-full h-full block" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#c60b1e" />
+      <rect y="25" width="100" height="50" fill="#ffc400" />
+      <g transform="translate(28, 35) scale(0.4)">
         <path d="M0 0 h50 v42 a25 25 0 0 1 -50 0 z" fill="#c60b1e" stroke="#ffc400" strokeWidth="4" />
         <path d="M10 10 h30 v25 a15 15 0 0 1 -30 0 z" fill="#ffc400" />
         <circle cx="25" cy="22" r="7" fill="#0035a0" />
@@ -25,16 +25,26 @@ function SpainFlag() {
 
 function USAFlag() {
   return (
-    <svg viewBox="0 0 741 390" className="w-full h-full object-cover scale-[1.35]" xmlns="http://www.w3.org/2000/svg">
-      <rect width="741" height="390" fill="#b22234" />
-      <path d="M0,30H741M0,90H741M0,150H741M0,210H741M0,270H741M0,330H741" stroke="#fff" strokeWidth="30" />
-      <rect width="296.4" height="210" fill="#3c3b6e" />
-      <g fill="#fff">
-        <circle cx="35" cy="25" r="8" /><circle cx="85" cy="25" r="8" /><circle cx="135" cy="25" r="8" /><circle cx="185" cy="25" r="8" /><circle cx="235" cy="25" r="8" />
-        <circle cx="60" cy="55" r="8" /><circle cx="110" cy="55" r="8" /><circle cx="160" cy="55" r="8" /><circle cx="210" cy="55" r="8" />
-        <circle cx="35" cy="85" r="8" /><circle cx="85" cy="85" r="8" /><circle cx="135" cy="85" r="8" /><circle cx="185" cy="85" r="8" /><circle cx="235" cy="85" r="8" />
-        <circle cx="60" cy="115" r="8" /><circle cx="110" cy="115" r="8" /><circle cx="160" cy="115" r="8" /><circle cx="210" cy="115" r="8" />
-        <circle cx="35" cy="145" r="8" /><circle cx="85" cy="145" r="8" /><circle cx="135" cy="145" r="8" /><circle cx="185" cy="145" r="8" /><circle cx="235" cy="145" r="8" />
+    <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" className="w-full h-full block" xmlns="http://www.w3.org/2000/svg">
+      {/* 13 stripes */}
+      <rect width="100" height="100" fill="#b22234" />
+      <rect y="7.69" width="100" height="7.69" fill="#ffffff" />
+      <rect y="23.07" width="100" height="7.69" fill="#ffffff" />
+      <rect y="38.46" width="100" height="7.69" fill="#ffffff" />
+      <rect y="53.84" width="100" height="7.69" fill="#ffffff" />
+      <rect y="69.23" width="100" height="7.69" fill="#ffffff" />
+      <rect y="84.61" width="100" height="7.69" fill="#ffffff" />
+      {/* Canton */}
+      <rect width="45" height="53.84" fill="#3c3b6e" />
+      {/* Stars grid */}
+      <g fill="#ffffff" transform="scale(0.8) translate(3, 3)">
+        <circle cx="8" cy="8" r="2.2" /><circle cx="20" cy="8" r="2.2" /><circle cx="32" cy="8" r="2.2" /><circle cx="44" cy="8" r="2.2" />
+        <circle cx="14" cy="16" r="2.2" /><circle cx="26" cy="16" r="2.2" /><circle cx="38" cy="16" r="2.2" />
+        <circle cx="8" cy="24" r="2.2" /><circle cx="20" cy="24" r="2.2" /><circle cx="32" cy="24" r="2.2" /><circle cx="44" cy="24" r="2.2" />
+        <circle cx="14" cy="32" r="2.2" /><circle cx="26" cy="32" r="2.2" /><circle cx="38" cy="32" r="2.2" />
+        <circle cx="8" cy="40" r="2.2" /><circle cx="20" cy="40" r="2.2" /><circle cx="32" cy="40" r="2.2" /><circle cx="44" cy="40" r="2.2" />
+        <circle cx="14" cy="48" r="2.2" /><circle cx="26" cy="48" r="2.2" /><circle cx="38" cy="48" r="2.2" />
+        <circle cx="8" cy="56" r="2.2" /><circle cx="20" cy="56" r="2.2" /><circle cx="32" cy="56" r="2.2" /><circle cx="44" cy="56" r="2.2" />
       </g>
     </svg>
   );
@@ -96,11 +106,11 @@ export function Navigation() {
 
         {/* CTAs & Controls — Desktop */}
         <div className="hidden md:flex items-center gap-2.5">
-          {/* Language Selector — SVG flag button covering the entire circle */}
+          {/* Language Selector — SVG flag button covering 100% of the circle */}
           <button
             onClick={toggleLanguage}
             title={lang === 'es' ? 'Switch to English (US)' : 'Cambiar a Español (ES)'}
-            className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 hover:border-cyan-400 transition-all duration-200 hover:scale-110 shadow-lg group flex items-center justify-center bg-black/40 focus:outline-none"
+            className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 hover:border-cyan-400 transition-all duration-200 hover:scale-110 shadow-lg group flex items-center justify-center p-0 focus:outline-none cursor-pointer shrink-0"
             aria-label={`Change language to ${nextLang.toUpperCase()}`}
           >
             {lang === 'es' ? <SpainFlag /> : <USAFlag />}
@@ -134,7 +144,7 @@ export function Navigation() {
           <button
             onClick={toggleLanguage}
             title={lang === 'es' ? 'Switch to English (US)' : 'Cambiar a Español (ES)'}
-            className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 hover:border-cyan-400 transition-all duration-200 flex items-center justify-center bg-black/40 focus:outline-none"
+            className="relative w-8 h-8 rounded-full overflow-hidden border-2 border-white/20 hover:border-cyan-400 transition-all duration-200 flex items-center justify-center p-0 focus:outline-none cursor-pointer shrink-0"
             aria-label={`Change language to ${nextLang.toUpperCase()}`}
           >
             {lang === 'es' ? <SpainFlag /> : <USAFlag />}
