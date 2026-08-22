@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import './globals.css';
 import { Navigation } from '@/components/Navigation';
 import { LanguageProvider } from '@/lib/LanguageContext';
 import { Footer } from '@/components/Footer';
+import AikrofyWidget from '@/components/ui/AikrofyWidget';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://weblifetech.com'),
@@ -49,12 +51,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
-        {/* Aikrofy Conversational Webchat & CRM Lead Capture */}
-        <script
-          src="https://app.aikrofy.com/widget.js"
-          data-widget-id="f97f9776-e3e5-4891-ad7f-5e54f91462c1"
-          async
-        />
+        {/* Preconnect to AI Agent Server */}
+        <link rel="preconnect" href="https://app.aikrofy.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://app.aikrofy.com" />
       </head>
       <body className="font-body antialiased bg-background text-foreground selection:bg-primary selection:text-primary-foreground min-h-screen flex flex-col">
         <LanguageProvider>
@@ -63,6 +62,14 @@ export default function RootLayout({
             {children}
           </div>
           <Footer />
+          <AikrofyWidget />
+          {/* Aikrofy Conversational AI Webchat & CRM Lead Capture */}
+          <Script
+            id="aikrofy-widget-script"
+            src="https://app.aikrofy.com/widget.js"
+            data-widget-id="cccce8d4-a48a-4ba9-9d9f-66ef41b656dc"
+            strategy="afterInteractive"
+          />
         </LanguageProvider>
       </body>
     </html>
