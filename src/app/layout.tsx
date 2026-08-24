@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import './globals.css';
 import { Navigation } from '@/components/Navigation';
 import { LanguageProvider } from '@/lib/LanguageContext';
@@ -63,13 +62,6 @@ export default function RootLayout({
           </div>
           <Footer />
           <AikrofyWidget />
-          {/* Aikrofy Conversational AI Webchat & CRM Lead Capture */}
-          <Script
-            id="aikrofy-widget-script"
-            src="https://app.aikrofy.com/widget.js"
-            data-widget-id="cccce8d4-a48a-4ba9-9d9f-66ef41b656dc"
-            strategy="afterInteractive"
-          />
         </LanguageProvider>
       </body>
     </html>
