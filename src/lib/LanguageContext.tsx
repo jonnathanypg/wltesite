@@ -250,6 +250,18 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       // Ignore SSR / localStorage errors
     }
+
+    const handleExternalLang = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent?.detail?.lang && (customEvent.detail.lang === 'es' || customEvent.detail.lang === 'en')) {
+        setLangState(customEvent.detail.lang);
+      }
+    };
+
+    window.addEventListener('wlt:lang-changed', handleExternalLang);
+    return () => {
+      window.removeEventListener('wlt:lang-changed', handleExternalLang);
+    };
   }, []);
 
   const setLang = useCallback((newLang: Language) => {
@@ -263,7 +275,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const t = useCallback((key: string): string => {
-    return DICTIONARY[lang][key] || DICTIONARY['es'][key] || key;
+    const currentPack = DICTIONARY[lang] || DICTIONARY['es'];
+    return currentPack[key] || DICTIONARY['es'][key] || key;
   }, [lang]);
 
   const value = useMemo(() => ({ lang, setLang, t }), [lang, setLang, t]);

@@ -6,6 +6,7 @@ import Script from 'next/script';
 
 export default function AikrofyWidget() {
   const pathname = usePathname();
+  const widgetId = process.env.NEXT_PUBLIC_AIKROFY_WIDGET_ID || 'f97f9776-e3e5-4891-ad7f-5e54f91462c1';
 
   useEffect(() => {
     // Ensure widget presence and visibility on every SPA page navigation
@@ -24,11 +25,12 @@ export default function AikrofyWidget() {
   return (
     <Script
       id="aikrofy-widget-script"
-      src="https://app.aikrofy.com/widget.js"
-      data-widget-id="4f548c30-1cb6-48c0-aa43-f07a5a28a825"
-      strategy="lazyOnload"
+      src="/widget.js"
+      data-widget-id={widgetId}
+      data-api-host="https://aikrofy.com"
+      strategy="afterInteractive"
       onError={(e) => {
-        console.warn('Aikrofy widget script failed to load (external service unreachable):', e);
+        console.warn('Aikrofy widget script failed to load:', e);
       }}
     />
   );

@@ -41,11 +41,11 @@
     // Intentar extraer de query params si se cargó como /widget.js?id=...
     if (script && script.src) {
         try {
-            const urlObj = new URL(script.src);
+            const urlObj = new URL(script.src, window.location.href);
             if (!widgetId) {
                 widgetId = urlObj.searchParams.get('id');
             }
-            if (urlObj.hostname && urlObj.hostname !== 'localhost' && !urlObj.hostname.includes('127.0.0.1')) {
+            if (urlObj.hostname && (urlObj.hostname.includes('aikrofy.com') || urlObj.hostname.includes('aikrofy.app'))) {
                 API_HOST = urlObj.origin;
             }
         } catch (e) {}
@@ -53,8 +53,6 @@
 
     if (customApiHost) {
         API_HOST = customApiHost;
-    } else if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-        API_HOST = "http://localhost:5010";
     }
 
     if (!widgetId) {
