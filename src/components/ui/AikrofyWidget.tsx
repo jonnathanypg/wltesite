@@ -6,7 +6,8 @@ import Script from 'next/script';
 
 export default function AikrofyWidget() {
   const pathname = usePathname();
-  const widgetId = process.env.NEXT_PUBLIC_AIKROFY_WIDGET_ID || 'f97f9776-e3e5-4891-ad7f-5e54f91462c1';
+  const widgetId = process.env.NEXT_PUBLIC_AIKROFY_WIDGET_ID || '4f548c30-1cb6-48c0-aa43-f07a5a28a825';
+  const apiHost = process.env.NEXT_PUBLIC_AIKROFY_API_HOST || 'https://app.aikrofy.com';
 
   useEffect(() => {
     // Ensure widget presence and visibility on every SPA page navigation
@@ -25,9 +26,9 @@ export default function AikrofyWidget() {
   return (
     <Script
       id="aikrofy-widget-script"
-      src="/widget.js"
+      src="https://app.aikrofy.com/widget.js"
       data-widget-id={widgetId}
-      data-api-host="https://aikrofy.com"
+      data-api-host={apiHost}
       strategy="afterInteractive"
       onError={(e) => {
         console.warn('Aikrofy widget script failed to load:', e);

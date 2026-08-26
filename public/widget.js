@@ -36,7 +36,7 @@
 
     let widgetId = script ? script.getAttribute('data-widget-id') : null;
     let customApiHost = script ? (script.getAttribute('data-api-host') || script.getAttribute('data-host')) : null;
-    let API_HOST = "https://aikrofy.com";
+    let API_HOST = "https://app.aikrofy.com";
 
     // Intentar extraer de query params si se cargó como /widget.js?id=...
     if (script && script.src) {
@@ -57,7 +57,7 @@
 
     if (!widgetId) {
         // Fallback por defecto o atributo global
-        widgetId = window.AIKROFY_WIDGET_ID || 'f97f9776-e3e5-4891-ad7f-5e54f91462c1';
+        widgetId = window.AIKROFY_WIDGET_ID || '4f548c30-1cb6-48c0-aa43-f07a5a28a825';
     }
 
     const CONFIG = {

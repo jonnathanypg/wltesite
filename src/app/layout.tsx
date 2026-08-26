@@ -58,8 +58,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
         {/* Preconnect to AI Agent Server */}
-        <link rel="preconnect" href="https://aikrofy.com" crossOrigin="anonymous" />
-        <link rel="dns-prefetch" href="https://aikrofy.com" />
+        <link rel="preconnect" href="https://app.aikrofy.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://app.aikrofy.com" />
       </head>
       <body className="font-body antialiased bg-background text-foreground selection:bg-primary selection:text-primary-foreground min-h-screen flex flex-col" suppressHydrationWarning>
         <LanguageProvider>
