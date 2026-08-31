@@ -46,8 +46,8 @@ export default function EnterprisePriorityPage() {
             <Calendar className="h-12 w-12 text-orange-400 mx-auto animate-pulse" />
             <h3 className="text-xl font-headline font-bold text-white">Agenda Prioritaria de Arquitectura</h3>
             <p className="text-xs font-mono text-muted-foreground">[ Widget Integrado de Calendly / Cal.com - Agenda Priority Active ]</p>
-            <a href="https://wa.me/593982840685?text=Hola%2C%20califique%20como%20Enterprise%20Priority%20para%20Vibe-to-Prod" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-full px-8 shadow-xl mt-4">
+            <a href="https://wa.me/593982840685?text=Hola%2C%20califique%20como%20Enterprise%20Priority%20para%20Vibe-to-Prod" target="_blank" rel="noopener noreferrer" className="inline-block max-w-full w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto h-auto min-h-12 py-3.5 px-6 sm:px-8 text-sm sm:text-base bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-full shadow-xl mt-4 whitespace-normal leading-snug text-center max-w-full">
                 Confirmar Cita Prioritaria Vía WhatsApp Express →
               </Button>
             </a>

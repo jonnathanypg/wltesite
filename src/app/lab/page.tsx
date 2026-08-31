@@ -133,8 +133,8 @@ export default function LabPage() {
               ? 'Cada avance logrado en WEBLIFETECH Labs se empaqueta de inmediato en herramientas internas que utiliza nuestra división de Agencia. Esto nos permite ejecutar refactorizaciones 4 veces más rápido que cualquier firma de ingeniería tradicional.'
               : 'Every breakthrough achieved at WEBLIFETECH Labs is immediately packaged into internal tools used by our Agency division. This allows us to execute refactoring 4x faster than any traditional engineering firm.'}
           </p>
-          <Link href="/contacto">
-            <Button size="lg" className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold rounded-full px-8">
+          <Link href="/contacto" className="inline-block max-w-full w-full sm:w-auto">
+            <Button size="lg" className="w-full sm:w-auto h-auto min-h-12 py-3 px-6 sm:px-8 text-sm sm:text-base bg-cyan-500 hover:bg-cyan-600 text-black font-bold rounded-full whitespace-normal leading-snug text-center max-w-full">
               {lang === 'es'
                 ? '¿Interesado en una Colaboración Institucional o R&D? Contáctenos →'
                 : 'Interested in Institutional Collaboration or R&D? Contact Us →'}

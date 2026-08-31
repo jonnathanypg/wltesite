@@ -45,15 +45,15 @@ export default function Home() {
           </p>
 
           {/* Dual CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-            <Link href="/calificar">
-              <Button size="lg" className="h-14 px-8 text-base bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-full font-bold shadow-xl shadow-orange-500/25 transition-all group">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 max-w-full">
+            <Link href="/calificar" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto h-auto min-h-12 sm:min-h-14 py-3.5 px-6 sm:px-8 text-sm sm:text-base bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-full font-bold shadow-xl shadow-orange-500/25 transition-all group whitespace-normal leading-snug text-center max-w-full">
                 {t('hero.ctaPrimary')}
-                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform inline-block shrink-0" />
               </Button>
             </Link>
-            <a href="#metodologia">
-              <Button size="lg" variant="outline" className="h-14 px-8 text-base border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/10 rounded-full font-bold">
+            <a href="#metodologia" className="w-full sm:w-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-auto min-h-12 sm:min-h-14 py-3.5 px-6 sm:px-8 text-sm sm:text-base border-cyan-500/40 text-cyan-300 hover:bg-cyan-500/10 rounded-full font-bold whitespace-normal leading-snug text-center max-w-full">
                 {t('hero.ctaSecondary')}
               </Button>
             </a>
@@ -264,8 +264,8 @@ export default function Home() {
         <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
           {t('cta.desc')}
         </p>
-        <Link href="/calificar">
-          <Button size="lg" className="h-16 px-10 text-lg bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-full font-bold shadow-2xl shadow-orange-500/30 transition-all">
+        <Link href="/calificar" className="inline-block max-w-full w-full sm:w-auto">
+          <Button size="lg" className="w-full sm:w-auto h-auto min-h-14 sm:min-h-16 py-3.5 px-6 sm:px-10 text-base sm:text-lg bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-full font-bold shadow-2xl shadow-orange-500/30 transition-all whitespace-normal leading-snug text-center max-w-full">
             {t('cta.button')}
           </Button>
         </Link>

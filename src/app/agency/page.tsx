@@ -149,8 +149,8 @@ export default function AgencyPage() {
 
       {/* CTA DE AGENCIA */}
       <section className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <Link href="/calificar">
-          <Button size="lg" className="h-16 px-10 text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-xl shadow-blue-600/30">
+        <Link href="/calificar" className="inline-block max-w-full w-full sm:w-auto">
+          <Button size="lg" className="w-full sm:w-auto h-auto min-h-14 sm:min-h-16 py-3.5 px-6 sm:px-10 text-sm sm:text-base md:text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-xl shadow-blue-600/30 whitespace-normal leading-snug text-center max-w-full">
             {lang === 'es'
               ? 'Agendar Sesión de Evaluación Técnica con un FDE Senior →'
               : 'Schedule Technical Evaluation Session with a Senior FDE →'}

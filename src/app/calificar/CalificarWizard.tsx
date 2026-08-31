@@ -233,16 +233,16 @@ export function CalificarWizard() {
       )}
 
       {/* Control Buttons */}
-      <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/10">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8 pt-6 border-t border-white/10">
         {step > 1 ? (
-          <Button variant="outline" onClick={handlePrev} className="border-white/10 text-white rounded-full">
+          <Button variant="outline" onClick={handlePrev} className="w-full sm:w-auto h-auto min-h-10 py-2.5 px-6 border-white/10 text-white rounded-full whitespace-normal leading-snug text-center max-w-full">
             <ArrowLeft className="h-4 w-4 mr-2" /> Anterior
           </Button>
         ) : <div />}
 
         <Button 
           onClick={handleNext}
-          className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-full px-8 shadow-lg"
+          className="w-full sm:w-auto h-auto min-h-10 py-2.5 px-8 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-full shadow-lg whitespace-normal leading-snug text-center max-w-full"
         >
           {step === 5 ? "Finalizar & Calificar →" : "Siguiente →"}
         </Button>

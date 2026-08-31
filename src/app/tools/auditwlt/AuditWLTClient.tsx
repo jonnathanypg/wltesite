@@ -146,15 +146,15 @@ export function AuditWLTClient() {
           <Button 
             type="submit" 
             disabled={analyzing}
-            className="w-full h-14 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-600 hover:to-indigo-700 text-white font-bold rounded-2xl text-sm sm:text-base shadow-xl shadow-cyan-500/20 transition-all cursor-pointer"
+            className="w-full h-auto min-h-12 sm:min-h-14 py-3.5 px-4 sm:px-6 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-600 hover:to-indigo-700 text-white font-bold rounded-2xl text-xs sm:text-base shadow-xl shadow-cyan-500/20 transition-all cursor-pointer whitespace-normal leading-snug text-center max-w-full"
           >
             {analyzing ? (
-              <span className="flex items-center gap-2 font-mono">
-                <Activity className="h-5 w-5 animate-spin text-cyan-200" /> {steps[currentStepIdx]}
+              <span className="flex items-center justify-center gap-2 font-mono flex-wrap">
+                <Activity className="h-5 w-5 animate-spin text-cyan-200 shrink-0" /> {steps[currentStepIdx]}
               </span>
             ) : (
-              <span className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-cyan-200" /> {t('audit.cta')}
+              <span className="flex items-center justify-center gap-2 flex-wrap">
+                <Sparkles className="h-5 w-5 text-cyan-200 shrink-0" /> {t('audit.cta')}
               </span>
             )}
           </Button>
@@ -284,8 +284,8 @@ export function AuditWLTClient() {
                   : 'Our Forward Deployed engineers refactor your MVP in 3 to 5 days.'}
               </p>
             </div>
-            <Link href="/calificar">
-              <Button className="bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold rounded-full px-6 text-xs shrink-0 cursor-pointer shadow-lg shadow-orange-500/20">
+            <Link href="/calificar" className="w-full sm:w-auto shrink-0">
+              <Button className="w-full sm:w-auto h-auto min-h-10 py-2.5 px-6 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold rounded-full text-xs cursor-pointer shadow-lg shadow-orange-500/20 whitespace-normal leading-snug text-center max-w-full">
                 {lang === 'es' ? 'Solicitar Refactorización Vibe-to-Prod →' : 'Request Vibe-to-Prod Refactoring →'}
               </Button>
             </Link>

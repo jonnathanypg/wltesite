@@ -124,8 +124,8 @@ export default function ContactoPage() {
               </div>
             </div>
 
-            <Link href="/calificar">
-              <Button className="w-full h-14 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-full text-base shadow-xl">
+            <Link href="/calificar" className="block w-full">
+              <Button className="w-full h-auto min-h-12 sm:min-h-14 py-3.5 px-4 sm:px-6 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-full text-sm sm:text-base shadow-xl whitespace-normal leading-snug text-center max-w-full">
                 {lang === 'es' ? 'Ir al Formulario de Calificación Triage →' : 'Proceed to Project Qualification Form →'}
               </Button>
             </Link>

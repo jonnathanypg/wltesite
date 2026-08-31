@@ -75,7 +75,7 @@ export function FastTrackForm() {
         </select>
       </div>
 
-      <Button type="submit" className="w-full h-14 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-xl text-sm shadow-xl shadow-orange-500/20 mt-4">
+      <Button type="submit" className="w-full h-auto min-h-12 sm:min-h-14 py-3.5 px-4 sm:px-6 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-xl shadow-orange-500/20 mt-4 whitespace-normal leading-snug text-center max-w-full">
         SOLICITAR VIBE AUDIT EXPRÉS EN 5 DÍAS →
       </Button>
     </form>

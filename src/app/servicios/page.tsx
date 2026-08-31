@@ -115,8 +115,8 @@ export default function ServiciosPage() {
             </div>
           </div>
 
-          <Link href="/calificar">
-            <Button className="bg-cyan-500 hover:bg-cyan-600 text-black font-bold rounded-full px-6">
+          <Link href="/calificar" className="inline-block max-w-full w-full sm:w-auto">
+            <Button className="w-full sm:w-auto h-auto min-h-10 py-2.5 px-6 bg-cyan-500 hover:bg-cyan-600 text-black font-bold rounded-full whitespace-normal leading-snug text-center max-w-full">
               {lang === 'es' ? 'Solicitar Fase 1 Audit →' : 'Request Phase 1 Audit →'}
             </Button>
           </Link>
@@ -217,8 +217,8 @@ export default function ServiciosPage() {
             </div>
           </div>
 
-          <Link href="/calificar">
-            <Button className="bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold rounded-full px-6">
+          <Link href="/calificar" className="inline-block max-w-full w-full sm:w-auto">
+            <Button className="w-full sm:w-auto h-auto min-h-10 py-2.5 px-6 bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold rounded-full whitespace-normal leading-snug text-center max-w-full">
               {lang === 'es' ? 'Evaluar Mi Proyecto para Fase 2 →' : 'Evaluate My Project for Phase 2 →'}
             </Button>
           </Link>
@@ -290,8 +290,8 @@ export default function ServiciosPage() {
             </div>
           </div>
 
-          <Link href="/calificar">
-            <Button variant="outline" className="border-blue-500/40 text-blue-300 hover:bg-blue-500/10 rounded-full px-6 font-bold">
+          <Link href="/calificar" className="inline-block max-w-full w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto h-auto min-h-10 py-2.5 px-6 border-blue-500/40 text-blue-300 hover:bg-blue-500/10 rounded-full font-bold whitespace-normal leading-snug text-center max-w-full">
               {lang === 'es' ? 'Consultar Planes de Suscripción →' : 'Explore Retainer Plans →'}
             </Button>
           </Link>
